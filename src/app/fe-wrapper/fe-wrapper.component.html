@@ -1,0 +1,36 @@
+<div class="error-text">{{ loadingError }}</div>
+<div class="form-title" [ngClass]="{'error': hasValidationErrors}">
+    <span *ngIf="encounter" class="omrs-type-body-small" style="color: var(--omrs-color-ink-medium-contrast);">
+        <svg class="omrs-icon title-icon-size" fill="var(--omrs-color-ink-low-contrast)">
+            <use xlink:href="#omrs-icon-calendar"></use>
+        </svg>
+        {{encounterDate + " "}} 
+        <svg class="omrs-icon title-icon-size" fill="var(--omrs-color-ink-low-contrast)">
+            <use xlink:href="#omrs-icon-access-time"></use>
+        </svg>
+        {{encounterTime}}
+    </span>
+</div>
+<div *ngIf="!formSubmitted" class="container-fluid scoped-bootstrap form-container" [ngClass]="{'error': hasValidationErrors}">
+    <!-- <error-renderer [form]="form"></error-renderer> -->
+    <div  class="main-container">
+        <div class="sidebar" (click)="onExpandCollapseErrorPanel($event)" [ngClass]="{'no-errors': !hasValidationErrors, 'open': errorPanelOpen, 'closed': !errorPanelOpen }">
+            <div class="error-text error-title" [ngClass]="{'closed': !errorPanelOpen }">Errors</div>
+            <br/>
+            <div class="error-content" [ngClass]="{'closed': !errorPanelOpen }">
+                <error-renderer class="fix-margin" *ngIf="hasValidationErrors" [form]="form"></error-renderer>
+            </div>
+        </div>
+        <div class="content" (click)="onErrorPanelLostFocus()">
+            <form *ngIf="formSchema" [formGroup]="form.rootNode.control">
+                <form-renderer [node]="form.rootNode"></form-renderer>
+                <input type="submit" value="Save" (click)="onSubmit($event)" class="omrs-btn omrs-filled-action">
+                <input type="button" value="Cancel" (click)="onCancel()" class="omrs-btn omrs-outlined-destructive pull-right">
+            </form>
+        </div>
+       
+    </div>
+</div>
+<div class="form-container">
+    <my-app-form-submitted *ngIf="formSubmitted" (cancelled)="onCancel()" (editRequested)="onEditSaved()" ></my-app-form-submitted>
+</div>

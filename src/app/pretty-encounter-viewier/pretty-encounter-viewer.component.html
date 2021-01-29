@@ -1,0 +1,16 @@
+<div *ngIf="error" class="text-center">
+  {{errorMessage}}
+</div>
+<div *ngIf="showLoader" class="text-center">
+  {{this.loaderText}}
+</div>
+
+<div class="scoped-bootstrap">
+  <div class="row text-left">
+    <div *ngIf="form && selectedEncounter && !error" id="encounter">
+      <div class="omrs-type-title-3">{{selectedEncounter.form.name}}</div>
+      <encounter-renderer [encounter]="selectedEncounter" [form]="form"></encounter-renderer>
+    </div>
+  </div>
+</div>
+
