@@ -15,7 +15,7 @@
           "options": {
             "outputPath": "dist/openmrs-esm-form-entry-app",
             "index": "src/index.html",
-            "main": "src/main.single-spa.ts",
+            "main": "src/openmrs.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": false,
@@ -44,10 +44,10 @@
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
-              "aot": true,
+              "aot": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": true,
+              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
