@@ -10,7 +10,7 @@
     "e2e": "ng e2e",
     "build:single-spa-local": "ng build --prod --output-hashing=none --deploy-url https://localhost:4200/ && npm run rename:mainjs",
     "build:single-spa-travis": "bash ./scripts/build-travis.sh",
-    "serve:single-spa": "ng serve --ssl true  --disable-host-check --deploy-url https://localhost:4200/ --host localhost --port 4202 --live-reload true",
+    "serve:single-spa": "ng serve --ssl true  --disable-host-check --deploy-url https://localhost:4202/ --host localhost --port 4202 --live-reload true",
     "serve:dist": "npx angular-http-server -p 4200 --https --cors --path dist/openmrs-esm-form-entry-app/",
     "build-serve:dist": "npm run build:single-spa-local && npm run serve:dist",
     "rename:mainjs": "node -e \"require('fs').rename('dist/openmrs-esm-form-entry-app/main-es2015.js', 'dist/openmrs-esm-form-entry-app/openmrs-esm-form-entry-app.js', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\""
@@ -27,7 +27,6 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
-    "@openmrs/esm-api": "^1.2.1",
     "ngx-bootstrap": "5.6.x",
     "ngx-file-uploader": "0.0.18",
     "rxjs": "^6.5.3",
@@ -40,9 +39,11 @@
     "@angular/cli": "~8.3.20",
     "@angular/compiler-cli": "~8.2.14",
     "@angular/language-service": "~8.2.14",
+    "@openmrs/esm-api": "^1.2.1",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^8.9.5",
+    "@types/webpack-env": "^1.16.0",
     "angular-http-server": "^1.9.0",
     "codelyzer": "^5.0.0",
     "jasmine-core": "~3.4.0",
@@ -58,5 +59,8 @@
     "tslint": "~5.15.0",
     "typescript": "~3.5.3",
     "webpack-bundle-analyzer": "^3.6.0"
+  },
+  "peerDependencies": {
+    "@openmrs/esm-api": "^1.2.1"
   }
 }

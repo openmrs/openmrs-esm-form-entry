@@ -1,2 +1,6 @@
-<my-app-fe-wrapper *ngIf="view === 'form'"></my-app-fe-wrapper>
-<my-app-encounter-viewer-wrapper *ngIf="view === 'encounter-viewer'"></my-app-encounter-viewer-wrapper>
+<div style="margin: 2rem;">
+  <my-app-fe-wrapper *ngIf="view === 'form'"></my-app-fe-wrapper>
+  <my-app-encounter-viewer-wrapper
+    *ngIf="view === 'encounter-viewer'"
+  ></my-app-encounter-viewer-wrapper>
+</div>
