@@ -8,7 +8,7 @@ const importTranslation = require.context(
 );
 
 function setupOpenMRS() {
-  const moduleName = '@openmrs/esm-form-entry';
+  const moduleName = '@openmrs/esm-form-entry-app';
 
   return {
     extensions: [
