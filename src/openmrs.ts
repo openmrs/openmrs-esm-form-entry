@@ -1,21 +1,21 @@
-import { backendDependencies } from "./openmrs-backend-dependencies";
+import { backendDependencies } from './openmrs-backend-dependencies';
 
 const importTranslation = require.context(
-  "../translations",
+  '../translations',
   false,
   /.json$/,
-  "lazy"
+  'lazy'
 );
 
 function setupOpenMRS() {
-  const moduleName = "@openmrs/esm-form-entry";
+  const moduleName = '@openmrs/esm-form-entry';
 
   return {
     extensions: [
       {
-        id: "form-widget",
-        slot: "form-widget",
-        load: () => import("./main.single-spa"),
+        id: 'form-widget',
+        slot: 'form-widget',
+        load: () => import('./main.single-spa'),
       },
     ],
   };

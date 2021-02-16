@@ -206,7 +206,6 @@ export class FeWrapperComponent implements OnInit {
           user: data[2],
           encounter: data.length === 4 ? data[2] : null
         };
-        console.log('Loaded form dependencies', formData);
         trackingSubject.next(formData);
       }, (err) => {
         trackingSubject.error(new Error('There was an error fetching form data. Details: ' + err));
@@ -221,7 +220,6 @@ export class FeWrapperComponent implements OnInit {
     this.formSchemaService
       .getFormSchemaByUuid(uuid, true).pipe(take(1))
       .subscribe(formSchema => {
-        // console.log('Loaded form schema', formSchema);
         subject.next(formSchema);
       }, error => {
         subject.error(new Error('Error fetching form schema. Details: ' + error));
