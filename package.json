@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "npm run build:single-spa-local",
     "test": "ng test --watch false",
+    "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:single-spa-local": "ng build --prod --output-hashing=none --deploy-url https://localhost:4200/ && npm run rename:mainjs",

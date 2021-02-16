@@ -15,7 +15,6 @@ export class EncounterViewerWrapperComponent implements OnInit {
     ngOnInit(): void {
         this.loadEncounterViewer()
         .subscribe((encounter) => {
-            console.log('encounter loaded', this.encounterUuid);
         }, (err) => {
             console.error('Error rendering encounter', err);
         });
