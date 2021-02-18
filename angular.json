@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist/openmrs-esm-form-entry-app",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/openmrs.ts",
             "polyfills": "src/polyfills.ts",

@@ -12,9 +12,9 @@
     "build:single-spa-local": "ng build --prod --output-hashing=none --deploy-url https://localhost:4200/ && npm run rename:mainjs",
     "build:single-spa-travis": "bash ./scripts/build-travis.sh",
     "serve:single-spa": "ng serve --ssl true  --disable-host-check --deploy-url https://localhost:4202/ --host localhost --port 4202 --live-reload true",
-    "serve:dist": "npx angular-http-server -p 4200 --https --cors --path dist/openmrs-esm-form-entry-app/",
+    "serve:dist": "npx angular-http-server -p 4200 --https --cors --path dist/",
     "build-serve:dist": "npm run build:single-spa-local && npm run serve:dist",
-    "rename:mainjs": "node -e \"require('fs').rename('dist/openmrs-esm-form-entry-app/main-es2015.js', 'dist/openmrs-esm-form-entry-app/openmrs-esm-form-entry-app.js', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\""
+    "rename:mainjs": "node -e \"require('fs').rename('dist/main-es2015.js', 'dist/openmrs-esm-form-entry-app.js', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\""
   },
   "private": true,
   "dependencies": {
