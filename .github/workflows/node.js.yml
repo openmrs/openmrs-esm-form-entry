@@ -19,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Compute Timestamp
+        run: echo "TIMESTAMP=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
@@ -26,7 +28,8 @@ jobs:
       - run: npm install
       - run: npm run lint
       - run: npm run test-headless
-      - run: npm run build --if-present
+      - run: npm run build:prod  -- --deploy-url='https://spa-modules.nyc3.digitaloceanspaces.com/${{ env.ESM_NAME }}/${{ env.TIMESTAMP }}_${{ github.sha }}/' --prod --output-hashing=none
+      - run: npm run rename:mainjs
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
