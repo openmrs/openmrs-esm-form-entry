@@ -14,7 +14,7 @@ function setupOpenMRS() {
     extensions: [
       {
         id: 'form-widget',
-        slot: 'form-widget',
+        slot: 'form-widget-slot',
         load: () => import('./main.single-spa'),
       },
     ],
