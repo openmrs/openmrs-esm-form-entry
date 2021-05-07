@@ -21,6 +21,9 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 2. Serve dist of single spa
 `npm run serve:dist`
 
+3. Serve single spa
+`npm run serve:single-spa`
+
 Optionally, build and server single spa
 `npm run build-serve:dist`
 
