@@ -1,4 +1,12 @@
-import { backendDependencies } from './openmrs-backend-dependencies';
+import { setPublicPath } from 'systemjs-webpack-interop';
+
+const moduleName = '@openmrs/esm-form-entry-app';
+
+setPublicPath(moduleName);
+
+const backendDependencies = {
+  'webservices.rest': '2.24.0',
+};
 
 const importTranslation = require.context(
   '../translations',
@@ -8,7 +16,6 @@ const importTranslation = require.context(
 );
 
 function setupOpenMRS() {
-  const moduleName = '@openmrs/esm-form-entry-app';
 
   return {
     extensions: [
