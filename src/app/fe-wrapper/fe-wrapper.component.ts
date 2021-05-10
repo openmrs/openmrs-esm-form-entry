@@ -171,6 +171,7 @@ export class FeWrapperComponent implements OnInit {
       .pipe(take(1))
       .subscribe((props) => {
         this.formUuid = props.formUuid;
+        this.patient = props.patient;
         if (props.encounterUuid) {
           this.encounterUuid = props.encounterUuid;
         }
@@ -189,7 +190,6 @@ export class FeWrapperComponent implements OnInit {
     const trackingSubject = new ReplaySubject<any>(1);
     const observableBatch: Array<Observable<any>> = [];
     observableBatch.push(this.fetchCompiledFormSchema(this.formUuid).pipe(take(1)));
-    observableBatch.push(this.getCurrentPatient().pipe(take(1)));
     observableBatch.push(this.openmrsApi.getCurrentUserLocation().pipe(take(1)));
     if (this.encounterUuid) {
       observableBatch.push(this.getEncounterToEdit(this.encounterUuid).pipe(take(1)));
@@ -197,13 +197,12 @@ export class FeWrapperComponent implements OnInit {
     forkJoin(observableBatch)
       .subscribe((data: any) => {
         this.formSchema = data[0] || null;
-        this.patient = data[1] || null;
-        this.loggedInUser = data[2] || null;
-        this.encounter = data[3] || null;
+        this.loggedInUser = data[1] || null;
+        this.encounter = data[2] || null;
         const formData = {
           formSchema: data[0],
-          patient: data[1],
-          user: data[2],
+          patient: this.patient,
+          user: data[1],
           encounter: data.length === 4 ? data[2] : null
         };
         trackingSubject.next(formData);
