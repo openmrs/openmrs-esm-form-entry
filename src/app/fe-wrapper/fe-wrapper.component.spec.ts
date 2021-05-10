@@ -19,13 +19,6 @@ import { EncounterViewerWrapperComponent } from '../pretty-encounter-viewier/enc
 describe('FeWrapperComponent', () => {
   let component: FeWrapperComponent;
   let fixture: ComponentFixture<FeWrapperComponent>;
-  // let openmrsServiceSpy: any;
-
-  const openmrsApiStub = {
-    getCurrentPatient: () => {
-      return of(null);
-    }
-  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -40,7 +33,6 @@ describe('FeWrapperComponent', () => {
       providers: [
         {
           provide: OpenmrsEsmApiService,
-          useValue: openmrsApiStub
         },
         FormSchemaService,
         LocalStorageService,

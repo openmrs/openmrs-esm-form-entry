@@ -226,10 +226,6 @@ export class FeWrapperComponent implements OnInit {
     return subject.asObservable();
   }
 
-  private getCurrentPatient(): Observable<any> {
-    return this.openmrsApi.getCurrentPatient();
-  }
-
   private getEncounterToEdit(encounterUuid: string): Observable<any> {
     const subject = new ReplaySubject<any>(1);
     const sub: Subscription = this.encounterResourceService.getEncounterByUuid(encounterUuid)
