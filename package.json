@@ -42,7 +42,7 @@
     "@angular/cli": "~8.3.20",
     "@angular/compiler-cli": "~8.2.14",
     "@angular/language-service": "~8.2.14",
-    "@openmrs/esm-api": "^1.2.1",
+    "@openmrs/esm-framework": "next",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^8.9.5",
@@ -61,7 +61,8 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
     "typescript": "~3.5.3",
-    "webpack-bundle-analyzer": "^3.6.0"
+    "webpack-bundle-analyzer": "^3.6.0",
+    "webpack-stats-plugin": "^1.0.3"
   },
   "peerDependencies": {
     "@openmrs/esm-api": "^1.2.1"
