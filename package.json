@@ -10,12 +10,11 @@
     "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:single-spa-local": "ng build --prod --output-hashing=none --deploy-url https://localhost:4200/ && npm run rename:mainjs",
+    "build:single-spa-local": "ng build --prod --output-hashing=none --deploy-url https://localhost:4200/",
     "build:single-spa-travis": "bash ./scripts/build-travis.sh",
     "serve:single-spa": "ng serve --ssl true  --disable-host-check --deploy-url https://localhost:4202/ --host localhost --port 4202 --live-reload true",
     "serve:dist": "npx angular-http-server -p 4200 --https --cors --path dist/",
-    "build-serve:dist": "npm run build:single-spa-local && npm run serve:dist",
-    "rename:mainjs": "node -e \"require('fs').rename('dist/main-es2015.js', 'dist/openmrs-esm-form-entry-app.js', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\""
+    "build-serve:dist": "npm run build:single-spa-local && npm run serve:dist"
   },
   "private": true,
   "dependencies": {
