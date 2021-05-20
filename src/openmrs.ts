@@ -1,5 +1,5 @@
 import { setPublicPath } from "systemjs-webpack-interop";
-import { messageOmrsServiceWorker } from "@openmrs/esm-framework";
+import { messageOmrsServiceWorker, subscribeNetworkRequestFailed } from "@openmrs/esm-framework";
 
 setPublicPath("@openmrs/esm-form-entry-app");
 
@@ -15,6 +15,28 @@ function setupOpenMRS() {
   messageOmrsServiceWorker({
     "type": "registerDynamicRoute",
     "pattern": ".+/visit.+"
+  });
+
+  messageOmrsServiceWorker({
+    "type": "registerDynamicRoute",
+    "pattern": ".+/ws/fhir2/R4/Observation.+"
+  });
+
+  messageOmrsServiceWorker({
+    "type": "registerDynamicRoute",
+    "pattern": ".+/ws/rest/v1/obs.+"
+  });
+
+  messageOmrsServiceWorker({
+    "type": "registerDynamicRoute",
+    "pattern": ".+/ws/rest/v1/appui/session.*"
+  });
+
+  subscribeNetworkRequestFailed(({request}) => {
+    console.log('Request failed: ', request);
+    if (request.method === 'POST' && request.url.endsWith('/ws/rest/v1/encounter')) {
+      console.log('Encounter request failed: ', request);
+    }
   });
 
   return {

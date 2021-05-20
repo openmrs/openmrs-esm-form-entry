@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {getCurrentUser, openmrsObservableFetch} from '@openmrs/esm-framework';
 
 @Injectable()
 export class OpenmrsEsmApiService {
@@ -8,14 +9,10 @@ export class OpenmrsEsmApiService {
   constructor() { }
 
   public getCurrentUser(): Observable<any> {
-    // HACK: Required to enable unit tests to run
-    const backend = require('@openmrs/esm-api');
-    return backend.getCurrentUser();
+    return getCurrentUser();
   }
   public  openmrsFetch(url): Observable<any> {
-    // HACK: Required to enable unit tests to run
-    const backend = require('@openmrs/esm-api');
-    return backend.openmrsObservableFetch(url);
+    return openmrsObservableFetch(url);
   }
 
   public getCurrentUserLocation(): Observable<any> {
