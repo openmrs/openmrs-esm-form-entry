@@ -1,22 +1,28 @@
-import { setPublicPath } from 'systemjs-webpack-interop';
+import { setPublicPath } from "systemjs-webpack-interop";
+import { messageOmrsServiceWorker } from "@openmrs/esm-framework";
 
-setPublicPath('@openmrs/esm-form-entry-app');
+setPublicPath("@openmrs/esm-form-entry-app");
 
-const backendDependencies = { 'webservices.rest': '2.24.0' };
+const backendDependencies = { "webservices.rest": "2.24.0" };
 const importTranslation = require.context(
-  '../translations',
+  "../translations",
   false,
   /.json$/,
-  'lazy'
+  "lazy"
 );
 
 function setupOpenMRS() {
+  messageOmrsServiceWorker({
+    "type": "registerDynamicRoute",
+    "pattern": ".+/visit.+"
+  });
+
   return {
     extensions: [
       {
-        id: 'form-widget',
-        slot: 'form-widget-slot',
-        load: () => import('./main.single-spa'),
+        id: "form-widget",
+        slot: "form-widget-slot",
+        load: () => import("./main.single-spa"),
         online: true,
         offline: true,
       },

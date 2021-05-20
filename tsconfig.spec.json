@@ -5,7 +5,12 @@
     "types": [
       "jasmine",
       "node"
-    ]
+    ],
+    "paths": {
+      "@openmrs/esm-framework": [
+        "node_modules/@openmrs/esm-framework/dist/openmrs-esm-framework.js"
+      ]
+    }
   },
   "files": [
     "src/test.ts",
