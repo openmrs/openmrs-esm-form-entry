@@ -1,5 +1,5 @@
 import { setPublicPath } from "systemjs-webpack-interop";
-import { messageOmrsServiceWorker, subscribeNetworkRequestFailed } from "@openmrs/esm-framework";
+import { messageOmrsServiceWorker } from "@openmrs/esm-framework";
 
 setPublicPath("@openmrs/esm-form-entry-app");
 
