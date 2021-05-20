@@ -13,23 +13,23 @@ const importTranslation = require.context(
 
 function setupOpenMRS() {
   messageOmrsServiceWorker({
-    "type": "registerDynamicRoute",
-    "pattern": ".+/visit.+"
+    type: "registerDynamicRoute",
+    pattern: ".+/visit.+",
   });
 
   messageOmrsServiceWorker({
-    "type": "registerDynamicRoute",
-    "pattern": ".+/ws/fhir2/R4/Observation.+"
+    type: "registerDynamicRoute",
+    pattern: ".+/ws/fhir2/R4/Observation.+",
   });
 
   messageOmrsServiceWorker({
-    "type": "registerDynamicRoute",
-    "pattern": ".+/ws/rest/v1/obs.+"
+    type: "registerDynamicRoute",
+    pattern: ".+/ws/rest/v1/obs.+",
   });
 
   messageOmrsServiceWorker({
-    "type": "registerDynamicRoute",
-    "pattern": ".+/ws/rest/v1/appui/session.*"
+    type: "registerDynamicRoute",
+    pattern: ".+/ws/rest/v1/appui/session.*",
   });
 
   return {
