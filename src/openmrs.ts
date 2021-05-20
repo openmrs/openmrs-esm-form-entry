@@ -32,13 +32,6 @@ function setupOpenMRS() {
     "pattern": ".+/ws/rest/v1/appui/session.*"
   });
 
-  subscribeNetworkRequestFailed(({request}) => {
-    console.log('Request failed: ', request);
-    if (request.method === 'POST' && request.url.endsWith('/ws/rest/v1/encounter')) {
-      console.log('Encounter request failed: ', request);
-    }
-  });
-
   return {
     extensions: [
       {
