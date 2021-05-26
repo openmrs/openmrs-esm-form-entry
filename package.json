@@ -14,7 +14,8 @@
     "build:single-spa-travis": "bash ./scripts/build-travis.sh",
     "serve:single-spa": "ng serve --ssl true  --disable-host-check --deploy-url https://localhost:4202/ --host localhost --port 4202 --live-reload true",
     "serve:dist": "npx angular-http-server -p 4200 --https --cors --path dist/",
-    "build-serve:dist": "npm run build:single-spa-local && npm run serve:dist"
+    "build-serve:dist": "npm run build:single-spa-local && npm run serve:dist",
+    "prettier": "prettier --config prettier.config.js --write \"src/**/*.{ts,tsx}\""
   },
   "private": true,
   "dependencies": {
@@ -56,6 +57,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "prettier": "^2.3.0",
     "protractor": "~5.4.0",
     "replace-in-file-webpack-plugin": "^1.0.6",
     "ts-node": "~7.0.0",
