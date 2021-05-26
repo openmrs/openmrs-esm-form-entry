@@ -86,7 +86,7 @@ export class FeWrapperComponent implements OnInit {
       this.saveForm()
         .subscribe(
           response => {
-            this.encounterUuid = response[0].uuid;
+            this.encounterUuid = response[0] && response[0].uuid;
             this.formSubmitted = true;
           }, error => {
             console.error('Error submitting form', error);

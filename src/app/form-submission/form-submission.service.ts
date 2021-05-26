@@ -119,10 +119,8 @@ export class FormSubmissionService {
   private processFormSubmissionResponse(responses: Array<any>): any {
     const arrayOfErrors: Array<any> = [];
     responses.forEach((response: any, key) => {
-      if (response !== undefined) {
-        if (response.hasError) {
-          arrayOfErrors.push(response);
-        }
+      if (response && response.hasError) {
+        arrayOfErrors.push(response);
       }
     });
     if (arrayOfErrors.length > 1) { // all payloads failed
