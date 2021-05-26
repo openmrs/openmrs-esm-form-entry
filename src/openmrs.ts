@@ -1,5 +1,10 @@
 import { setPublicPath } from "systemjs-webpack-interop";
-import { messageOmrsServiceWorker } from "@openmrs/esm-framework";
+import {
+  messageOmrsServiceWorker,
+  subscribeNetworkRequestFailed,
+  registerSynchronizationCallback,
+} from "@openmrs/esm-framework";
+import { FormEntryDb, syncQueuedHttpRequests } from "./offline";
 
 setPublicPath("@openmrs/esm-form-entry-app");
 
@@ -12,6 +17,13 @@ const importTranslation = require.context(
 );
 
 function setupOpenMRS() {
+  subscribeNetworkRequestFailed(async (data) => {
+    const db = new FormEntryDb();
+    await db.httpRequests.add({ request: data.request });
+  });
+
+  registerSynchronizationCallback(() => syncQueuedHttpRequests());
+
   messageOmrsServiceWorker({
     type: "registerDynamicRoute",
     pattern: ".+/visit.+",
