@@ -1,6 +1,5 @@
 import Dexie, { Table } from "dexie";
 import { NetworkRequestFailedEvent } from "@openmrs/esm-framework";
-import { openmrsFetch } from "@openmrs/esm-framework";
 
 export async function syncQueuedHttpRequests() {
   const db = new FormEntryDb();
@@ -9,7 +8,7 @@ export async function syncQueuedHttpRequests() {
   if (httpRequests.length > 0) {
     await Promise.all(
       httpRequests.map(async ({ id, request }) => {
-        await openmrsFetch(request.url, {
+        await fetch(request.url, {
           method: request.method,
           headers: request.headers,
           body: request.body,

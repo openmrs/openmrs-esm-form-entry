@@ -18,8 +18,13 @@ const importTranslation = require.context(
 
 function setupOpenMRS() {
   subscribeNetworkRequestFailed(async (data) => {
-    const db = new FormEntryDb();
-    await db.httpRequests.add({ request: data.request });
+    if (
+      data.request.method === "POST" &&
+      /.+\/ws\/rest\/v1\/encounter.*/.test(data.request.url)
+    ) {
+      const db = new FormEntryDb();
+      await db.httpRequests.add({ request: data.request });
+    }
   });
 
   registerSynchronizationCallback(() => syncQueuedHttpRequests());
