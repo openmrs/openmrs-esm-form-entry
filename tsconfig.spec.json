@@ -8,7 +8,7 @@
     ],
     "paths": {
       "@openmrs/esm-framework": [
-        "node_modules/@openmrs/esm-framework/dist/openmrs-esm-framework.js"
+        "src/openmrs-esm-framework.mock.js"
       ]
     }
   },
