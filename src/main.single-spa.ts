@@ -6,10 +6,7 @@ import { ɵAnimationEngine as AnimationEngine } from '@angular/animations/browse
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import singleSpaAngular from 'single-spa-angular';
-import {
-  singleSpaPropsSubject,
-  SingleSpaProps,
-} from './single-spa/single-spa-props';
+import { singleSpaPropsSubject, SingleSpaProps } from './single-spa/single-spa-props';
 import 'zone.js/dist/zone';
 
 if (environment.production) {
@@ -32,4 +29,3 @@ const lifecycles = singleSpaAngular({
 export const bootstrap = lifecycles.bootstrap;
 export const mount = lifecycles.mount;
 export const unmount = lifecycles.unmount;
-

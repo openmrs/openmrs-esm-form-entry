@@ -14,7 +14,7 @@ export async function syncQueuedHttpRequests() {
           body: request.body,
         });
         await db.httpRequests.delete(id);
-      }),‚
+      }),
     );
   }
 }

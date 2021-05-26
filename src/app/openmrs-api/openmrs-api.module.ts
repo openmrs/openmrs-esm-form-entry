@@ -12,10 +12,7 @@ import { EncounterResourceService } from './encounter-resource.service';
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    HttpClientModule
-  ],
+  imports: [CommonModule, HttpClientModule],
   providers: [
     FormResourceService,
     OpenmrsEsmApiService,
@@ -23,7 +20,7 @@ import { EncounterResourceService } from './encounter-resource.service';
     ProviderResourceService,
     LocationResourceService,
     ConceptResourceService,
-    EncounterResourceService
-  ]
+    EncounterResourceService,
+  ],
 })
-export class OpenmrsApiModule { }
+export class OpenmrsApiModule {}

@@ -6,7 +6,6 @@ import { WindowRef } from '../window-ref';
 // Load the implementations that should be tested
 
 describe('FormResourceService Unit Tests', () => {
-
   let formsResourceService: FormResourceService;
   let httpMock: HttpTestingController;
   let winRef: WindowRef;
@@ -15,17 +14,12 @@ describe('FormResourceService Unit Tests', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [],
-      providers: [
-        FormResourceService,
-        LocalStorageService,
-        WindowRef
-      ],
+      providers: [FormResourceService, LocalStorageService, WindowRef],
     });
 
     formsResourceService = TestBed.get(FormResourceService);
     httpMock = TestBed.get(HttpTestingController);
     winRef = TestBed.get(WindowRef);
-
   }));
 
   afterEach(() => {
@@ -44,8 +38,7 @@ describe('FormResourceService Unit Tests', () => {
 
     const req = httpMock.expectOne(winRef.openmrsRestBase.trim() + 'clobdata' + '/' + uuid + '?v=full');
     expect(req.request.method).toBe('GET');
-    expect(req.request.urlWithParams)
-      .toContain('/ws/rest/v1/clobdata/form-uuid?v=full');
+    expect(req.request.urlWithParams).toContain('/ws/rest/v1/clobdata/form-uuid?v=full');
   }));
 
   it('should make API call with correct URL when getFormClobDataByUuid is invoked with v', fakeAsync(() => {
@@ -55,24 +48,21 @@ describe('FormResourceService Unit Tests', () => {
 
     const req = httpMock.expectOne(winRef.openmrsRestBase.trim() + 'clobdata' + '/' + uuid + '?v=9');
     expect(req.request.method).toBe('GET');
-    expect(req.request.urlWithParams)
-      .toContain('/ws/rest/v1/clobdata/form-uuid?v=9');
+    expect(req.request.urlWithParams).toContain('/ws/rest/v1/clobdata/form-uuid?v=9');
   }));
 
   it('should return a form object when getFormClobDataByUuid is invoked without v', (done) => {
-
     const options = {
       uuid: 'xxx-xxx-xxx-xxx',
-      display: 'form resource'
+      display: 'form resource',
     };
 
     const uuid = 'form-uuid';
 
-    formsResourceService.getFormClobDataByUuid(uuid)
-      .subscribe((data) => {
-        expect(data.uuid).toBeTruthy();
-        done();
-      });
+    formsResourceService.getFormClobDataByUuid(uuid).subscribe((data) => {
+      expect(data.uuid).toBeTruthy();
+      done();
+    });
 
     const req = httpMock.expectOne(winRef.openmrsRestBase.trim() + 'clobdata' + '/' + uuid + '?v=full');
     expect(req.request.method).toBe('GET');
@@ -80,19 +70,17 @@ describe('FormResourceService Unit Tests', () => {
   });
 
   it('should return a form object when getFormClobDataByUuid is invoked with v', (done) => {
-
     const options = {
       uuid: 'xxx-xxx-xxx-xxx',
-      display: 'form resource'
+      display: 'form resource',
     };
 
     const uuid = 'form-uuid';
 
-    formsResourceService.getFormClobDataByUuid(uuid, '9')
-      .subscribe((data) => {
-        expect(data.uuid).toBeTruthy();
-        done();
-      });
+    formsResourceService.getFormClobDataByUuid(uuid, '9').subscribe((data) => {
+      expect(data.uuid).toBeTruthy();
+      done();
+    });
 
     const req = httpMock.expectOne(winRef.openmrsRestBase.trim() + 'clobdata' + '/' + uuid + '?v=9');
     expect(req.request.method).toBe('GET');
@@ -107,8 +95,7 @@ describe('FormResourceService Unit Tests', () => {
 
     const req = httpMock.expectOne(winRef.openmrsRestBase.trim() + 'form/' + uuid + '?v=full');
     expect(req.request.method).toBe('GET');
-    expect(req.request.urlWithParams)
-      .toContain('/ws/rest/v1/form/form-uuid?v=full');
+    expect(req.request.urlWithParams).toContain('/ws/rest/v1/form/form-uuid?v=full');
   }));
 
   it('should make API call with correct URL when getFormMetaDataByUuid is invoked with v', fakeAsync(() => {
@@ -119,46 +106,40 @@ describe('FormResourceService Unit Tests', () => {
 
     const req = httpMock.expectOne(winRef.openmrsRestBase.trim() + 'form/' + uuid + '?v=9');
     expect(req.request.method).toBe('GET');
-    expect(req.request.urlWithParams)
-      .toContain('/ws/rest/v1/form/form-uuid?v=9');
+    expect(req.request.urlWithParams).toContain('/ws/rest/v1/form/form-uuid?v=9');
   }));
 
   it('should return a form object when getFormMetaDataByUuid is invoked without v', (done) => {
     const uuid = 'form-uuid';
     const options = {
       uuid: 'xxx-xxx-xxx-xxx',
-      display: 'form resource'
+      display: 'form resource',
     };
 
-    formsResourceService.getFormMetaDataByUuid(uuid)
-      .subscribe((data) => {
-        expect(data.uuid).toBeTruthy();
-        done();
-      });
+    formsResourceService.getFormMetaDataByUuid(uuid).subscribe((data) => {
+      expect(data.uuid).toBeTruthy();
+      done();
+    });
 
     const req = httpMock.expectOne(winRef.openmrsRestBase.trim() + 'form/' + uuid + '?v=full');
     expect(req.request.method).toBe('GET');
     req.flush(options);
-
   });
 
   it('should return a form object when getFormMetaDataByUuid is invoked with v', (done) => {
     const uuid = 'form-uuid';
     const options = {
       uuid: 'xxx-xxx-xxx-xxx',
-      display: 'form resource'
+      display: 'form resource',
     };
 
-    formsResourceService.getFormMetaDataByUuid(uuid, '9')
-      .subscribe((data) => {
-        expect(data.uuid).toBeTruthy();
-        done();
-      });
+    formsResourceService.getFormMetaDataByUuid(uuid, '9').subscribe((data) => {
+      expect(data.uuid).toBeTruthy();
+      done();
+    });
 
     const req = httpMock.expectOne(winRef.openmrsRestBase.trim() + 'form/' + uuid + '?v=9');
     expect(req.request.method).toBe('GET');
     req.flush(options);
-
   });
-
 });

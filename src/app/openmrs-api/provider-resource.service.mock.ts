@@ -11,49 +11,43 @@ export class FakeProviderResourceService {
 
   constructor(
     protected http: HttpClient,
-    protected windowRef: WindowRef ,
-    protected personService: PersonResourceService
-    ) {
-  }
+    protected windowRef: WindowRef,
+    protected personService: PersonResourceService,
+  ) {}
 
   public getProviderByUuid(uuid: string): Observable<any> {
     const subject = new BehaviorSubject<any>(null);
-    subject.next(
-      [
-        {
-          uuid: 'uuid1',
-          display: 'display'
-        },
-        {
-          uuid: 'uuid2',
-          display: 'display'
-        }
-      ]
-    );
+    subject.next([
+      {
+        uuid: 'uuid1',
+        display: 'display',
+      },
+      {
+        uuid: 'uuid2',
+        display: 'display',
+      },
+    ]);
     return subject;
   }
   public getProviderByPersonUuid(uuid: string): Observable<any> {
     const subject = new BehaviorSubject<any>(null);
-    subject.next(
-      [
-        {
-          person: {
-            uuid: 'uuid',
-            display: 'display'
-          }
+    subject.next([
+      {
+        person: {
+          uuid: 'uuid',
+          display: 'display',
         },
-        {
-          person: {
-            uuid: 'uuid',
-            display: 'display'
-          }
-        }
-      ]
-    );
+      },
+      {
+        person: {
+          uuid: 'uuid',
+          display: 'display',
+        },
+      },
+    ]);
     return subject;
   }
-  public searchProvider(searchText: string,
-                        cached: boolean = false, v: string = null): Observable<any> {
+  public searchProvider(searchText: string, cached: boolean = false, v: string = null): Observable<any> {
     const test: BehaviorSubject<any> = new BehaviorSubject<any>([]);
     const provider = [
       {
@@ -61,17 +55,17 @@ export class FakeProviderResourceService {
         display: 'john',
         person: {
           uuid: 'uuid',
-          display: 'display'
-        }
+          display: 'display',
+        },
       },
       {
         uuid: 'uuid1',
         display: 'kennedy',
         person: {
           uuid: 'uuid',
-          display: 'display'
-        }
-      }
+          display: 'display',
+        },
+      },
     ];
 
     if (!this.returnErrorOnNext) {

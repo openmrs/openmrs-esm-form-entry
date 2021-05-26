@@ -6,12 +6,10 @@ import { map } from 'rxjs/operators';
 import { WindowRef } from '../window-ref';
 
 @Injectable()
-
 export class PersonResourceService {
   public v = 'full';
 
-  constructor(protected http: HttpClient, private windowRef: WindowRef) {
-  }
+  constructor(protected http: HttpClient, private windowRef: WindowRef) {}
 
   public getUrl(): string {
     return this.windowRef.openmrsRestBase + 'person';
@@ -21,10 +19,9 @@ export class PersonResourceService {
     let url = this.getUrl();
     url += '/' + uuid;
 
-    const params: HttpParams = new HttpParams()
-      .set('v', (v && v.length > 0) ? v : this.v);
+    const params: HttpParams = new HttpParams().set('v', v && v.length > 0 ? v : this.v);
     return this.http.get(url, {
-      params
+      params,
     });
   }
 
@@ -37,7 +34,7 @@ export class PersonResourceService {
     return this.http.post(url, JSON.stringify(payload), { headers }).pipe(
       map((response: any) => {
         return response.person;
-      }));
+      }),
+    );
   }
-
 }

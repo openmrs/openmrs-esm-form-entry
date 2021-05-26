@@ -9,12 +9,11 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 
 @Injectable()
 export class FormSchemaService {
-
   constructor(
     private formsResourceService: FormResourceService,
     private localStorage: LocalStorageService,
-    private formSchemaCompiler: FormSchemaCompiler) {
-  }
+    private formSchemaCompiler: FormSchemaCompiler,
+  ) {}
 
   public getFormSchemaByUuid(formUuid: string, cached: boolean = true): ReplaySubject<any> {
     const formSchema: ReplaySubject<any> = new ReplaySubject(1);
@@ -22,38 +21,37 @@ export class FormSchemaService {
     if (cachedCompiledSchema && cached === true) {
       formSchema.next(cachedCompiledSchema);
     } else {
-      this.getFormSchemaByUuidFromServer(formUuid)
-        .subscribe(
-          (unCompiledSchema: any) => {
-            const form: any = unCompiledSchema.form;
-            const referencedComponents: any = unCompiledSchema.referencedComponents;
-            // add from metadata to the uncompiled schema
-            this.formsResourceService.getFormMetaDataByUuid(formUuid)
-              .subscribe(
-                (formMetadataObject: any) => {
-                  formMetadataObject.pages = form.pages || [];
-                  formMetadataObject.referencedForms = form.referencedForms || [];
-                  formMetadataObject.processor = form.processor;
-                  // compile schema
-                  const compiledSchema: any = this.formSchemaCompiler
-                    .compileFormSchema(formMetadataObject, referencedComponents);
-                  // now cache the compiled schema
-                  this.cacheCompiledSchemaByUuid(formUuid, compiledSchema);
-                  // return the compiled schema
-                  formSchema.next(compiledSchema);
-                },
-                (err) => {
-                  console.error(err);
-                  formSchema.error(err);
-                }
+      this.getFormSchemaByUuidFromServer(formUuid).subscribe(
+        (unCompiledSchema: any) => {
+          const form: any = unCompiledSchema.form;
+          const referencedComponents: any = unCompiledSchema.referencedComponents;
+          // add from metadata to the uncompiled schema
+          this.formsResourceService.getFormMetaDataByUuid(formUuid).subscribe(
+            (formMetadataObject: any) => {
+              formMetadataObject.pages = form.pages || [];
+              formMetadataObject.referencedForms = form.referencedForms || [];
+              formMetadataObject.processor = form.processor;
+              // compile schema
+              const compiledSchema: any = this.formSchemaCompiler.compileFormSchema(
+                formMetadataObject,
+                referencedComponents,
               );
-          },
-          (err) => {
-            console.error(err);
-            formSchema.error(err);
-          }
-        );
-
+              // now cache the compiled schema
+              this.cacheCompiledSchemaByUuid(formUuid, compiledSchema);
+              // return the compiled schema
+              formSchema.next(compiledSchema);
+            },
+            (err) => {
+              console.error(err);
+              formSchema.error(err);
+            },
+          );
+        },
+        (err) => {
+          console.error(err);
+          formSchema.error(err);
+        },
+      );
     }
     return formSchema;
   }
@@ -68,55 +66,50 @@ export class FormSchemaService {
 
   private getFormSchemaByUuidFromServer(formUuid: string): ReplaySubject<object> {
     const formSchema: ReplaySubject<any> = new ReplaySubject(1);
-    this.fetchFormSchemaUsingFormMetadata(formUuid)
-      .subscribe(
-        (schema: any) => {
-          // check whether whether formSchema has references b4 hitting getFormSchemaWithReferences
-          if (schema.referencedForms && schema.referencedForms.length > 0) {
-            this.getFormSchemaWithReferences(schema)
-              .subscribe(
-                (form: object) => {
-                  formSchema.next(form);
-                },
-                (err) => {
-                  console.error(err);
-                  formSchema.error(err);
-                }
-              );
-          } else {
-            formSchema.next({
-              form: schema,
-              referencedComponents: []
-            });
-          }
-
-        },
-        (err) => {
-          console.error(err);
-          formSchema.error(err);
+    this.fetchFormSchemaUsingFormMetadata(formUuid).subscribe(
+      (schema: any) => {
+        // check whether whether formSchema has references b4 hitting getFormSchemaWithReferences
+        if (schema.referencedForms && schema.referencedForms.length > 0) {
+          this.getFormSchemaWithReferences(schema).subscribe(
+            (form: object) => {
+              formSchema.next(form);
+            },
+            (err) => {
+              console.error(err);
+              formSchema.error(err);
+            },
+          );
+        } else {
+          formSchema.next({
+            form: schema,
+            referencedComponents: [],
+          });
         }
-      );
+      },
+      (err) => {
+        console.error(err);
+        formSchema.error(err);
+      },
+    );
     return formSchema;
   }
 
   private getFormSchemaWithReferences(schema: any): ReplaySubject<any> {
     const formSchemaWithReferences: ReplaySubject<any> = new ReplaySubject(1);
-    this.fetchFormSchemaReferences(schema)
-      .subscribe(
-        (schemaReferences: Array<any>) => {
-          const forms: object = {
-            form: schema,
-            referencedComponents: schemaReferences
-          };
-          formSchemaWithReferences.next(forms);
-        },
-        (err) => {
-          console.error(err);
-          formSchemaWithReferences.error(err);
-        }
-      );
+    this.fetchFormSchemaReferences(schema).subscribe(
+      (schemaReferences: Array<any>) => {
+        const forms: object = {
+          form: schema,
+          referencedComponents: schemaReferences,
+        };
+        formSchemaWithReferences.next(forms);
+      },
+      (err) => {
+        console.error(err);
+        formSchemaWithReferences.error(err);
+      },
+    );
     return formSchemaWithReferences;
-
   }
 
   private fetchFormSchemaReferences(formSchema: any): Observable<any> {
@@ -126,9 +119,7 @@ export class FormSchemaService {
     if (Array.isArray(referencedForms) && referencedForms.length > 0) {
       const referencedUuids: Array<string> = this.getFormUuidArray(referencedForms);
       referencedUuids.forEach((referencedUuid: any, key) => {
-        observableBatch.push(
-          this.fetchFormSchemaUsingFormMetadata(referencedUuid)
-        );
+        observableBatch.push(this.fetchFormSchemaUsingFormMetadata(referencedUuid));
       });
     }
 
@@ -157,39 +148,34 @@ export class FormSchemaService {
         },
         () => {
           observer.next(schemaReferences);
-        }
+        },
       );
-
     }).pipe(first());
   }
 
   private fetchFormSchemaUsingFormMetadata(formUuid: string): Observable<any> {
     return Observable.create((observer: Subject<any>) => {
-      return this.formsResourceService.getFormMetaDataByUuid(formUuid)
-        .subscribe(
-          (formMetadataObject: any) => {
-            if (formMetadataObject.resources.length > 0) {
-              this.formsResourceService
-                .getFormClobDataByUuid(formMetadataObject.resources[0].valueReference)
-                .subscribe(
-                  (clobData: any) => {
-                    observer.next(clobData);
-                  },
-                  (err) => {
-                    console.error(err);
-                    observer.error(err);
-                  });
-            } else {
-              observer.error(formMetadataObject.display +
-                ':This formMetadataObject has no resource');
-            }
-
-          },
-          (err) => {
-            console.error(err);
-            observer.error(err);
-          });
-
+      return this.formsResourceService.getFormMetaDataByUuid(formUuid).subscribe(
+        (formMetadataObject: any) => {
+          if (formMetadataObject.resources.length > 0) {
+            this.formsResourceService.getFormClobDataByUuid(formMetadataObject.resources[0].valueReference).subscribe(
+              (clobData: any) => {
+                observer.next(clobData);
+              },
+              (err) => {
+                console.error(err);
+                observer.error(err);
+              },
+            );
+          } else {
+            observer.error(formMetadataObject.display + ':This formMetadataObject has no resource');
+          }
+        },
+        (err) => {
+          console.error(err);
+          observer.error(err);
+        },
+      );
     }).pipe(first());
   }
 
@@ -200,5 +186,4 @@ export class FormSchemaService {
     });
     return formUuids;
   }
-
 }
