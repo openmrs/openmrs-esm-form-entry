@@ -1,6 +1,6 @@
 import Dexie, { Table } from "dexie";
-import { NetworkRequestFailedEvent } from "@openmrs/esm-offline";
-import { openmrsFetch } from "@openmrs/esm-api";
+import { NetworkRequestFailedEvent } from "@openmrs/esm-framework";
+import { openmrsFetch } from "@openmrs/esm-framework";
 
 export async function syncQueuedHttpRequests() {
   const db = new FormEntryDb();
