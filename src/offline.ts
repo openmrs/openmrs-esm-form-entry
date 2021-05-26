@@ -8,13 +8,14 @@ export async function syncQueuedHttpRequests() {
 
   if (httpRequests.length > 0) {
     await Promise.all(
-      httpRequests.map(({ request }) =>
-        openmrsFetch(request.url, {
+      httpRequests.map(async ({ id, request }) => {
+        await openmrsFetch(request.url, {
           method: request.method,
           headers: request.headers,
           body: request.body,
-        })
-      )
+        });
+        await db.httpRequests.delete(id);
+      })
     );
   }
 }
