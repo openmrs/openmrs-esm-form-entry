@@ -18,7 +18,7 @@ module.exports = (angularWebpackConfig, options) => {
 
   singleSpaWebpackConfig.plugins.push(new BundleAnalyzerPlugin());
   singleSpaWebpackConfig.plugins.push(new StatsWriterPlugin({
-    filename: 'main.js.buildmanifest.json', // TODO: Ideally don't hardcode "main.js".
+    filename: 'main-es2015.js.buildmanifest.json',
     stats: {
       all: false,
       chunks: true,
