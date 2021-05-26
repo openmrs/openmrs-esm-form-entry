@@ -1,5 +1,5 @@
-import Dexie, { Table } from "dexie";
-import { NetworkRequestFailedEvent } from "@openmrs/esm-framework";
+import Dexie, { Table } from 'dexie';
+import { NetworkRequestFailedEvent } from '@openmrs/esm-framework';
 
 export async function syncQueuedHttpRequests() {
   const db = new FormEntryDb();
@@ -14,7 +14,7 @@ export async function syncQueuedHttpRequests() {
           body: request.body,
         });
         await db.httpRequests.delete(id);
-      })
+      }),‚
     );
   }
 }
@@ -23,17 +23,16 @@ export class FormEntryDb extends Dexie {
   httpRequests: Table<QueuedHttpRequest, number>;
 
   constructor() {
-    super("EsmFormEntry");
+    super('EsmFormEntry');
 
     this.version(1).stores({
-      httpRequests: "++id",
+      httpRequests: '++id',
     });
 
-    this.httpRequests = this.table("httpRequests");
+    this.httpRequests = this.table('httpRequests');
   }
 }
 
-export interface QueuedHttpRequest
-  extends Pick<NetworkRequestFailedEvent, "request"> {
+export interface QueuedHttpRequest extends Pick<NetworkRequestFailedEvent, 'request'> {
   id?: number;
 }
