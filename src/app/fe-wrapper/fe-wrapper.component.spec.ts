@@ -22,14 +22,13 @@ describe('FeWrapperComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FeWrapperComponent, FormSubmittedComponent, PrettyEncounterViewerComponent, EncounterViewerWrapperComponent ],
-      imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FormEntryModule,
-        ReactiveFormsModule,
-        OpenmrsApiModule
+      declarations: [
+        FeWrapperComponent,
+        FormSubmittedComponent,
+        PrettyEncounterViewerComponent,
+        EncounterViewerWrapperComponent,
       ],
+      imports: [BrowserModule, BrowserAnimationsModule, FormEntryModule, ReactiveFormsModule, OpenmrsApiModule],
       providers: [
         {
           provide: OpenmrsEsmApiService,
@@ -37,11 +36,10 @@ describe('FeWrapperComponent', () => {
         FormSchemaService,
         LocalStorageService,
         FormDataSourceService,
-        FormSubmissionService
-      ]
+        FormSubmissionService,
+      ],
       // schemas: [NO_ERRORS_SCHEMA]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

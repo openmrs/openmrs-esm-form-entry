@@ -24,7 +24,7 @@ import { EncounterViewerWrapperComponent } from './pretty-encounter-viewier/enco
     FeWrapperComponent,
     FormSubmittedComponent,
     PrettyEncounterViewerComponent,
-    EncounterViewerWrapperComponent
+    EncounterViewerWrapperComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,14 +32,9 @@ import { EncounterViewerWrapperComponent } from './pretty-encounter-viewier/enco
     FormEntryModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    OpenmrsApiModule
+    OpenmrsApiModule,
   ],
-  providers: [
-    FormSchemaService,
-    LocalStorageService,
-    FormDataSourceService,
-    FormSubmissionService
-  ],
-  bootstrap: [AppComponent]
+  providers: [FormSchemaService, LocalStorageService, FormDataSourceService, FormSubmissionService],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

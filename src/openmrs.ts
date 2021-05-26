@@ -1,21 +1,45 @@
 import { setPublicPath } from 'systemjs-webpack-interop';
+import {
+  messageOmrsServiceWorker,
+  subscribeNetworkRequestFailed,
+  registerSynchronizationCallback,
+} from '@openmrs/esm-framework';
+import { FormEntryDb, syncQueuedHttpRequests } from './offline';
 
-const moduleName = '@openmrs/esm-form-entry-app';
+setPublicPath('@openmrs/esm-form-entry-app');
 
-setPublicPath(moduleName);
-
-const backendDependencies = {
-  'webservices.rest': '2.24.0',
-};
-
-const importTranslation = require.context(
-  '../translations',
-  false,
-  /.json$/,
-  'lazy'
-);
+const backendDependencies = { 'webservices.rest': '2.24.0' };
+const importTranslation = require.context('../translations', false, /.json$/, 'lazy');
 
 function setupOpenMRS() {
+  subscribeNetworkRequestFailed(async (data) => {
+    if (data.request.method === 'POST' && /.+\/ws\/rest\/v1\/encounter.*/.test(data.request.url)) {
+      const db = new FormEntryDb();
+      await db.httpRequests.add({ request: data.request });
+    }
+  });
+
+  registerSynchronizationCallback(() => syncQueuedHttpRequests());
+
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/visit.+',
+  });
+
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/ws/fhir2/R4/Observation.+',
+  });
+
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/ws/rest/v1/obs.+',
+  });
+
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/ws/rest/v1/appui/session.*',
+  });
 
   return {
     extensions: [
@@ -23,6 +47,8 @@ function setupOpenMRS() {
         id: 'form-widget',
         slot: 'form-widget-slot',
         load: () => import('./main.single-spa'),
+        online: true,
+        offline: true,
       },
     ],
   };

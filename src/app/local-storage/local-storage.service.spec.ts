@@ -6,7 +6,7 @@ describe('LocalStorageService Tests', () => {
   const value = 'some value to be stored';
   const objectValue = {
     property1: 'localStorage wrapper',
-    property2: 'another property'
+    property2: 'another property',
   };
   beforeEach(() => {
     service = new LocalStorageService();
@@ -28,8 +28,7 @@ describe('LocalStorageService Tests', () => {
     } catch (e) {
       console.error('Error getting item', e);
     }
-    expect(v).toEqual(value,
-      'setItem() should store values');
+    expect(v).toEqual(value, 'setItem() should store values');
   });
   it('should return the correct length of localStorage', () => {
     window.localStorage.setItem(keyName, 'some value');

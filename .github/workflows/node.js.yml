@@ -11,7 +11,7 @@ on:
 
 env:
   ESM_NAME: "@openmrs/esm-form-entry-app"
-  JS_NAME: "openmrs-esm-form-entry-app.js"
+  JS_NAME: "main-es2015.js"
 
 jobs:
   build:
@@ -29,14 +29,13 @@ jobs:
       - run: npm run lint
       - run: npm run test-headless
       - run: npm run build:prod  -- --deploy-url='https://spa-modules.nyc3.digitaloceanspaces.com/${{ env.ESM_NAME }}/${{ env.TIMESTAMP }}_${{ github.sha }}/' --prod --output-hashing=none
-      - run: npm run rename:mainjs
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: dist
           path: |
             dist
-  
+
   deploy:
     runs-on: ubuntu-latest
 

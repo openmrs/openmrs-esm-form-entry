@@ -16,25 +16,15 @@ import { PrettyEncounterViewerComponent } from './pretty-encounter-viewier/prett
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
-        FormEntryModule,
-        ReactiveFormsModule,
-        OpenmrsApiModule
-      ],
+      imports: [RouterTestingModule, FormEntryModule, ReactiveFormsModule, OpenmrsApiModule],
       declarations: [
         AppComponent,
         FeWrapperComponent,
         FormSubmittedComponent,
         EncounterViewerWrapperComponent,
-        PrettyEncounterViewerComponent
+        PrettyEncounterViewerComponent,
       ],
-      providers: [
-        FormSchemaService,
-        LocalStorageService,
-        FormDataSourceService,
-        FormSubmissionService
-      ]
+      providers: [FormSchemaService, LocalStorageService, FormDataSourceService, FormSubmissionService],
     }).compileComponents();
   }));
 

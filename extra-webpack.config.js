@@ -3,6 +3,7 @@ const singleSpaAngularWebpack = require("single-spa-angular/lib/webpack")
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
 const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
+const { StatsWriterPlugin } = require("webpack-stats-plugin");
 const packageJson = require("./package.json");
 
 module.exports = (angularWebpackConfig, options) => {
@@ -16,6 +17,15 @@ module.exports = (angularWebpackConfig, options) => {
   }
 
   singleSpaWebpackConfig.plugins.push(new BundleAnalyzerPlugin());
+  singleSpaWebpackConfig.plugins.push(new StatsWriterPlugin({
+    filename: 'main-es2015.js.buildmanifest.json',
+    stats: {
+      all: false,
+      chunks: true,
+    },
+  }));
+
+  console.info(singleSpaWebpackConfig.plugins[singleSpaWebpackConfig.plugins.length - 1]);
 
   if (singleSpaWebpackConfig.mode === "production") {
     const path = singleSpaWebpackConfig.output.path;
@@ -48,6 +58,6 @@ module.exports = (angularWebpackConfig, options) => {
       ])
     );
   }
-  // Feel free to modify this webpack config however you'd like to
+
   return singleSpaWebpackConfig;
 };

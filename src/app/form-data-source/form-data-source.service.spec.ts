@@ -12,19 +12,18 @@ import { OpenmrsApiModule } from '../openmrs-api/openmrs-api.module';
 describe('Service: FormDataSourceService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        OpenmrsApiModule,
-        HttpClientTestingModule
-      ],
+      imports: [OpenmrsApiModule, HttpClientTestingModule],
       providers: [
         LocalStorageService,
         FormDataSourceService,
         {
-          provide: ProviderResourceService, useFactory: () => {
+          provide: ProviderResourceService,
+          useFactory: () => {
             return new FakeProviderResourceService(null, null, null);
-          }, deps: []
-        }
-      ]
+          },
+          deps: [],
+        },
+      ],
     });
   });
 
@@ -47,54 +46,57 @@ describe('Service: FormDataSourceService', () => {
       expect(results[0].value).toEqual('uuid');
       done();
     });
-
   });
 
-  it('should  find provider when getProviderByPersonUuid is called' +
-    ' with a person uuid', inject([ProviderResourceService],
+  it(
+    'should  find provider when getProviderByPersonUuid is called' + ' with a person uuid',
+    inject(
+      [ProviderResourceService],
       fakeAsync((providerResourceService: ProviderResourceService) => {
         const service: FormDataSourceService = TestBed.get(FormDataSourceService);
         const uuid = 'person-uuid-1';
-        spyOn(providerResourceService, 'getProviderByPersonUuid')
-          .and.callFake((params) => {
-            const subject = new ReplaySubject<any>();
-            subject.next({
-              person: {
-                uuid: 'uuid',
-                display: 'display'
-              }
-            });
-            return subject;
+        spyOn(providerResourceService, 'getProviderByPersonUuid').and.callFake((params) => {
+          const subject = new ReplaySubject<any>();
+          subject.next({
+            person: {
+              uuid: 'uuid',
+              display: 'display',
+            },
           });
+          return subject;
+        });
 
         service.getProviderByPersonUuid(uuid);
         tick(50);
         expect(providerResourceService.getProviderByPersonUuid).toHaveBeenCalled();
+      }),
+    ),
+  );
 
-      })));
-
-  it('should find provider when getProviderByProviderUuid is called' +
-    ' with a provider uuid', inject([ProviderResourceService],
+  it(
+    'should find provider when getProviderByProviderUuid is called' + ' with a provider uuid',
+    inject(
+      [ProviderResourceService],
       fakeAsync((providerResourceService: ProviderResourceService) => {
         const service: FormDataSourceService = TestBed.get(FormDataSourceService);
         const uuid = 'provider-uuid-1';
-        spyOn(providerResourceService, 'getProviderByUuid')
-          .and.callFake((params) => {
-            const subject = new BehaviorSubject<any>({});
-            subject.next({
-              uuid: 'uuid',
-              display: 'display'
-            });
-            return subject;
+        spyOn(providerResourceService, 'getProviderByUuid').and.callFake((params) => {
+          const subject = new BehaviorSubject<any>({});
+          subject.next({
+            uuid: 'uuid',
+            display: 'display',
           });
+          return subject;
+        });
         //
         service.getProviderByUuid(uuid).subscribe((data) => {
           expect(data).toBeTruthy();
           tick(50);
         });
         expect(providerResourceService.getProviderByUuid).toHaveBeenCalled();
-
-      })));
+      }),
+    ),
+  );
 
   it('should find location by search text', (done) => {
     const service: FormDataSourceService = TestBed.get(FormDataSourceService);
@@ -104,27 +106,26 @@ describe('Service: FormDataSourceService', () => {
       expect(results).toBeTruthy();
       done();
     });
-
   });
 
-  it('should get location by location uuid', inject([LocationResourceService],
+  it('should get location by location uuid', inject(
+    [LocationResourceService],
     fakeAsync((locationResourceService: LocationResourceService) => {
       const service: FormDataSourceService = TestBed.get(FormDataSourceService);
       const uuid = 'location-uuid-1';
-      spyOn(locationResourceService, 'getLocationByUuid')
-        .and.callFake((params) => {
-          const subject = new BehaviorSubject<any>({});
-          subject.next({
-            uuid: 'uuid',
-            display: 'display'
-          });
-          return subject;
+      spyOn(locationResourceService, 'getLocationByUuid').and.callFake((params) => {
+        const subject = new BehaviorSubject<any>({});
+        subject.next({
+          uuid: 'uuid',
+          display: 'display',
         });
+        return subject;
+      });
       service.getLocationByUuid(uuid);
       tick(50);
       expect(locationResourceService.getLocationByUuid).toHaveBeenCalled();
-
-    })));
+    }),
+  ));
 
   it('should find location by uuid', async((done) => {
     const service: FormDataSourceService = TestBed.get(FormDataSourceService);
@@ -134,7 +135,6 @@ describe('Service: FormDataSourceService', () => {
       expect(results).toBeTruthy();
       done();
     });
-
   }));
 
   it('should call resolveConcept', async((done) => {
@@ -145,7 +145,5 @@ describe('Service: FormDataSourceService', () => {
       expect(results).toBeTruthy();
       done();
     });
-
   }));
-
 });

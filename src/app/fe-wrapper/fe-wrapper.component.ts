@@ -5,8 +5,14 @@ import * as moment from 'moment';
 import { singleSpaPropsSubject, SingleSpaProps } from 'src/single-spa/single-spa-props';
 
 import {
-  QuestionFactory, FormFactory, ObsValueAdapter, OrderValueAdapter,
-  EncounterAdapter, DataSources, FormErrorsService, Form
+  QuestionFactory,
+  FormFactory,
+  ObsValueAdapter,
+  OrderValueAdapter,
+  EncounterAdapter,
+  DataSources,
+  FormErrorsService,
+  Form,
 } from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
 
 import { OpenmrsEsmApiService } from '../openmrs-api/openmrs-esm-api.service';
@@ -20,7 +26,7 @@ import { EncounterResourceService } from '../openmrs-api/encounter-resource.serv
 @Component({
   selector: 'my-app-fe-wrapper',
   templateUrl: './fe-wrapper.component.html',
-  styleUrls: ['./fe-wrapper.component.css']
+  styleUrls: ['./fe-wrapper.component.css'],
 })
 export class FeWrapperComponent implements OnInit {
   data: any;
@@ -66,31 +72,33 @@ export class FeWrapperComponent implements OnInit {
     private dataSources: DataSources,
     private formDataSourceService: FormDataSourceService,
     private formSubmissionService: FormSubmissionService,
-    private formErrorsService: FormErrorsService) {
-
-  }
+    private formErrorsService: FormErrorsService,
+  ) {}
 
   ngOnInit() {
-    this.launchForm()
-      .subscribe((form) => {
+    this.launchForm().subscribe(
+      (form) => {
         // console.log('Form loaded and rendered', form);
-      }, (err) => {
+      },
+      (err) => {
         // TODO: Handle errors
         console.error('Error rendering form', err);
         this.loadingError = 'Error loading form';
-      });
+      },
+    );
   }
 
   public onSubmit(event: any) {
     if (this.isFormValid()) {
-      this.saveForm()
-        .subscribe(
-          response => {
-            this.encounterUuid = response[0].uuid;
-            this.formSubmitted = true;
-          }, error => {
-            console.error('Error submitting form', error);
-          });
+      this.saveForm().subscribe(
+        (response) => {
+          this.encounterUuid = response[0] && response[0].uuid;
+          this.formSubmitted = true;
+        },
+        (error) => {
+          console.error('Error submitting form', error);
+        },
+      );
     } else {
       this.triedSubmitting = true;
       this.form.showErrors = true;
@@ -138,9 +146,8 @@ export class FeWrapperComponent implements OnInit {
 
   public getProps(): Observable<SingleSpaProps> {
     const subject = new ReplaySubject<SingleSpaProps>(1);
-    singleSpaPropsSubject
-      .pipe(take(1))
-      .subscribe((props) => {
+    singleSpaPropsSubject.pipe(take(1)).subscribe(
+      (props) => {
         this.singleSpaProps = props;
         const formUuid = props.formUuid;
         if (!(formUuid && typeof formUuid === 'string')) {
@@ -148,9 +155,11 @@ export class FeWrapperComponent implements OnInit {
           return;
         }
         subject.next(props);
-      }, (err) => {
+      },
+      (err) => {
         subject.error(err);
-      });
+      },
+    );
     return subject.asObservable();
   }
 
@@ -159,29 +168,35 @@ export class FeWrapperComponent implements OnInit {
     const loadForm = () => {
       this.loadAllFormDependencies()
         .pipe(take(1))
-        .subscribe((data) => {
-          this.createForm();
-          subject.next(this.form);
-        }, (err) => {
-          subject.error(err);
-        });
+        .subscribe(
+          (data) => {
+            this.createForm();
+            subject.next(this.form);
+          },
+          (err) => {
+            subject.error(err);
+          },
+        );
     };
 
     this.getProps()
       .pipe(take(1))
-      .subscribe((props) => {
-        this.formUuid = props.formUuid;
-        this.patient = props.patient;
-        if (props.encounterUuid) {
-          this.encounterUuid = props.encounterUuid;
-        }
-        if (props.visitUuid && !this.encounterUuid) {
-          this.visitUuid = props.visitUuid;
-        }
-        loadForm();
-      }, (err) => {
-        subject.error(err);
-      });
+      .subscribe(
+        (props) => {
+          this.formUuid = props.formUuid;
+          this.patient = props.patient;
+          if (props.encounterUuid) {
+            this.encounterUuid = props.encounterUuid;
+          }
+          if (props.visitUuid && !this.encounterUuid) {
+            this.visitUuid = props.visitUuid;
+          }
+          loadForm();
+        },
+        (err) => {
+          subject.error(err);
+        },
+      );
 
     return subject.asObservable();
   }
@@ -194,8 +209,8 @@ export class FeWrapperComponent implements OnInit {
     if (this.encounterUuid) {
       observableBatch.push(this.getEncounterToEdit(this.encounterUuid).pipe(take(1)));
     }
-    forkJoin(observableBatch)
-      .subscribe((data: any) => {
+    forkJoin(observableBatch).subscribe(
+      (data: any) => {
         this.formSchema = data[0] || null;
         this.loggedInUser = data[1] || null;
         this.encounter = data[2] || null;
@@ -203,13 +218,14 @@ export class FeWrapperComponent implements OnInit {
           formSchema: data[0],
           patient: this.patient,
           user: data[1],
-          encounter: data.length === 4 ? data[2] : null
+          encounter: data.length === 4 ? data[2] : null,
         };
         trackingSubject.next(formData);
-      }, (err) => {
+      },
+      (err) => {
         trackingSubject.error(new Error('There was an error fetching form data. Details: ' + err));
-      }
-      );
+      },
+    );
 
     return trackingSubject.asObservable();
   }
@@ -217,25 +233,31 @@ export class FeWrapperComponent implements OnInit {
   private fetchCompiledFormSchema(uuid: string): Observable<any> {
     const subject = new ReplaySubject<any>(1);
     this.formSchemaService
-      .getFormSchemaByUuid(uuid, true).pipe(take(1))
-      .subscribe(formSchema => {
-        subject.next(formSchema);
-      }, error => {
-        subject.error(new Error('Error fetching form schema. Details: ' + error));
-      });
+      .getFormSchemaByUuid(uuid, true)
+      .pipe(take(1))
+      .subscribe(
+        (formSchema) => {
+          subject.next(formSchema);
+        },
+        (error) => {
+          subject.error(new Error('Error fetching form schema. Details: ' + error));
+        },
+      );
     return subject.asObservable();
   }
 
   private getEncounterToEdit(encounterUuid: string): Observable<any> {
     const subject = new ReplaySubject<any>(1);
-    const sub: Subscription = this.encounterResourceService.getEncounterByUuid(encounterUuid)
-      .subscribe(encounter => {
+    const sub: Subscription = this.encounterResourceService.getEncounterByUuid(encounterUuid).subscribe(
+      (encounter) => {
         subject.next(encounter);
         sub.unsubscribe();
-      }, error => {
+      },
+      (error) => {
         subject.error(error);
         sub.unsubscribe();
-      });
+      },
+    );
     return subject.asObservable();
   }
 
@@ -252,18 +274,12 @@ export class FeWrapperComponent implements OnInit {
   }
 
   private wireDataSources() {
-    this.dataSources.registerDataSource('location',
-      this.formDataSourceService.getDataSources().location);
-    this.dataSources.registerDataSource('provider',
-      this.formDataSourceService.getDataSources().provider);
-    this.dataSources.registerDataSource('drug',
-      this.formDataSourceService.getDataSources().drug);
-    this.dataSources.registerDataSource('problem',
-      this.formDataSourceService.getDataSources().problem);
-    this.dataSources.registerDataSource('personAttribute',
-      this.formDataSourceService.getDataSources().location);
-    this.dataSources.registerDataSource('conceptAnswers',
-      this.formDataSourceService.getDataSources().conceptAnswers);
+    this.dataSources.registerDataSource('location', this.formDataSourceService.getDataSources().location);
+    this.dataSources.registerDataSource('provider', this.formDataSourceService.getDataSources().provider);
+    this.dataSources.registerDataSource('drug', this.formDataSourceService.getDataSources().drug);
+    this.dataSources.registerDataSource('problem', this.formDataSourceService.getDataSources().problem);
+    this.dataSources.registerDataSource('personAttribute', this.formDataSourceService.getDataSources().location);
+    this.dataSources.registerDataSource('conceptAnswers', this.formDataSourceService.getDataSources().conceptAnswers);
 
     // TODO: Fix the patient datasource object to work with FHIR
     // this.dataSources.registerDataSource('patient',
@@ -279,16 +295,14 @@ export class FeWrapperComponent implements OnInit {
     }
 
     // location
-    const encounterLocation = this.form.searchNodeByQuestionId('location',
-      'encounterLocation');
+    const encounterLocation = this.form.searchNodeByQuestionId('location', 'encounterLocation');
     if (encounterLocation.length > 0 && this.loggedInUser && this.loggedInUser.sessionLocation) {
       // const location = { value: this.loggedInUser.sessionLocation.uuid, label: this.loggedInUser.sessionLocation.display };
       encounterLocation[0].control.setValue(this.loggedInUser.sessionLocation.uuid);
     }
 
     // provider
-    const encounterProvider = this.form.searchNodeByQuestionId('provider',
-      'encounterProvider');
+    const encounterProvider = this.form.searchNodeByQuestionId('provider', 'encounterProvider');
     if (encounterProvider.length > 0 && this.loggedInUser && this.loggedInUser.currentProvider) {
       encounterProvider[0].control.setValue(this.loggedInUser.currentProvider.uuid);
     }
