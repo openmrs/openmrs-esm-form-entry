@@ -15,6 +15,6 @@ export class OpenmrsEsmApiService {
   }
 
   public getCurrentUserLocation(): Observable<any> {
-    return this.openmrsFetch('/ws/rest/v1/appui/session').pipe(map((resp) => resp.data));
+    return this.openmrsFetch('/ws/rest/v1/session').pipe(map((resp) => resp.data));
   }
 }

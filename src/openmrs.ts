@@ -38,7 +38,7 @@ function setupOpenMRS() {
 
   messageOmrsServiceWorker({
     type: 'registerDynamicRoute',
-    pattern: '.+/ws/rest/v1/appui/session.*',
+    pattern: '.+/ws/rest/v1/session.*',
   });
 
   return {
