@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 
 import { of as observableOf, Observable } from 'rxjs';
-import { map, flatMap } from 'rxjs/operators';
+import { map, flatMap, catchError } from 'rxjs/operators';
 import { WindowRef } from '../window-ref';
+import { getOfflineEncounterForForm, generateOfflineUuid } from 'src/offline';
 
 @Injectable()
 export class EncounterResourceService {
@@ -63,7 +64,7 @@ export class EncounterResourceService {
       'obs:(uuid,obsDatetime,concept:(uuid,uuid,name:(display)),value:ref,groupMembers))';
     const params = new HttpParams().set('v', customDefaultRep);
     const url = this.getUrl() + 'encounter/' + uuid;
-    return this.http.get(url, { params });
+    return this.http.get(url, { params }).pipe(catchError(() => getOfflineEncounterForForm(uuid)));
   }
 
   public getEncounterTypes(v: string) {
@@ -83,7 +84,11 @@ export class EncounterResourceService {
       return null;
     }
     const url = this.getUrl() + 'encounter';
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-omrs-offline-response-status': '200',
+      'x-omrs-offline-response-body': JSON.stringify({ uuid: generateOfflineUuid() }),
+    });
     return this.http.post(url, JSON.stringify(payload), { headers });
   }
 
@@ -92,7 +97,11 @@ export class EncounterResourceService {
       return null;
     }
     const url = this.getUrl() + 'encounter/' + uuid;
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-omrs-offline-response-status': '200',
+      'x-omrs-offline-response-body': JSON.stringify({ uuid }),
+    });
     return this.http.post(url, JSON.stringify(payload), { headers });
   }
 
