@@ -66,6 +66,21 @@ function setupOpenMRS() {
     pattern: '.+/ws/rest/v1/session.*',
   });
 
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/ws/rest/v1/provider.*',
+  });
+
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/ws/rest/v1/location.*',
+  });
+
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/ws/rest/v1/person.*',
+  });
+
   return {
     extensions: [
       {
