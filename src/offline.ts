@@ -168,8 +168,8 @@ export function mergeEncounterUpdate(original: any, updated: any) {
 function mergeObservations(original: Array<any>, updated: Array<any>) {
   // An observation can have "nested" observation values in the groupMembers field.
   // If present, these values must also be merged recursively.
-  const newObs = updated.filter((obs) => !obs.uuid);
-  const updatedObs = original.map((originalObs) => {
+  const newObservations = updated.filter((obs) => !obs.uuid);
+  const updatedObservations = original.map((originalObs) => {
     const updatedObs = updated.find((obs) => obs.uuid === originalObs.uuid);
     if (!updatedObs) {
       return originalObs;
@@ -188,7 +188,7 @@ function mergeObservations(original: Array<any>, updated: Array<any>) {
       };
     }
   });
-  return [...newObs, ...updatedObs].filter((obs) => !obs.voided);
+  return [...newObservations, ...updatedObservations].filter((obs) => !obs.voided);
 }
 
 function mergeOrders(original: Array<any>, updated: Array<any>) {
