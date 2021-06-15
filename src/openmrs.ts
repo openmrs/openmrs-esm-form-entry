@@ -4,7 +4,7 @@ import {
   subscribeNetworkRequestFailed,
   registerSynchronizationCallback,
 } from '@openmrs/esm-framework';
-import { FormEntryDb, syncQueuedHttpRequests } from './offline';
+import { FormEntryDb, syncQueuedEncounterRequests, addAllOfflineUuids, mergeEncounterUpdate } from './offline';
 
 setPublicPath('@openmrs/esm-form-entry-app');
 
@@ -13,13 +13,38 @@ const importTranslation = require.context('../translations', false, /.json$/, 'l
 
 function setupOpenMRS() {
   subscribeNetworkRequestFailed(async (data) => {
-    if (data.request.method === 'POST' && /.+\/ws\/rest\/v1\/encounter.*/.test(data.request.url)) {
-      const db = new FormEntryDb();
-      await db.httpRequests.add({ request: data.request });
+    const createEncounterPattern = /.+\/ws\/rest\/v1\/encounter$/;
+    const updateEncounterPattern = /.+\/ws\/rest\/v1\/encounter\/(.+)/;
+    if (data.request.method === 'POST') {
+      if (createEncounterPattern.test(data.request.url)) {
+        const db = new FormEntryDb();
+        const { uuid } = JSON.parse(data.request.headers['x-omrs-offline-response-body']);
+        const encounterPost = JSON.parse(data.request.body);
+        const body = { ...encounterPost, uuid };
+        addAllOfflineUuids(body);
+
+        await db.encounterRequests.add({
+          request: {
+            url: data.request.url,
+            method: data.request.method,
+            headers: data.request.headers,
+            body,
+          },
+        });
+      } else if (updateEncounterPattern.test(data.request.url)) {
+        const uuid = updateEncounterPattern.exec(data.request.url)[1];
+        const db = new FormEntryDb();
+        const entry = await db.encounterRequests.get({ 'request.body.uuid': uuid });
+        const existing = entry.request.body;
+        const update = JSON.parse(data.request.body);
+        const merged = mergeEncounterUpdate(existing, update);
+        entry.request.body = merged;
+        await db.encounterRequests.put(entry);
+      }
     }
   });
 
-  registerSynchronizationCallback(() => syncQueuedHttpRequests());
+  registerSynchronizationCallback(() => syncQueuedEncounterRequests());
 
   messageOmrsServiceWorker({
     type: 'registerDynamicRoute',
@@ -39,6 +64,21 @@ function setupOpenMRS() {
   messageOmrsServiceWorker({
     type: 'registerDynamicRoute',
     pattern: '.+/ws/rest/v1/session.*',
+  });
+
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/ws/rest/v1/provider.*',
+  });
+
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/ws/rest/v1/location.*',
+  });
+
+  messageOmrsServiceWorker({
+    type: 'registerDynamicRoute',
+    pattern: '.+/ws/rest/v1/person.*',
   });
 
   return {
