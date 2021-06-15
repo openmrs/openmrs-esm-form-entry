@@ -152,22 +152,8 @@ export function mergeEncounterUpdate(original: any, updated: any) {
   // - New sub-resources don't have an (offline-)UUID.
   // - Updated sub-resources *have* an (offline)-UUID and can be matched with the original.
   // - Deleted sub-resources have a state (`voided` for observations, `action` for orders).
-  const newObs = updated.obs.filter((obs) => !obs.uuid);
-  const updatedObs = original.obs.map((originalObs) => ({
-    ...originalObs,
-    ...updated.obs.find((updatedObs) => updatedObs.uuid === originalObs.uuid),
-  }));
-  const obs = [...newObs, ...updatedObs].filter((obs) => !obs.voided);
-
-  const newOrders = updated.orders.filter((order) => !order.uuid);
-  const updatedOrders = original.orders.map((originalOrder) => ({
-    ...originalOrder,
-    ...updated.orders.find((updatedOrder) => updatedOrder.uuid === originalOrder.uuid),
-  }));
-  const orders = [...newOrders, ...updatedOrders].filter(
-    (order) => order.action.toLowerCase() === 'new' || order.action.toLowerCase() === 'revise',
-  );
-
+  const obs = mergeObservations(original.obs, updated.obs);
+  const orders = mergeOrders(original.orders, updated.orders);
   const result = {
     ...original,
     ...updated,
@@ -177,6 +163,43 @@ export function mergeEncounterUpdate(original: any, updated: any) {
 
   addAllOfflineUuids(result);
   return result;
+}
+
+function mergeObservations(original: Array<any>, updated: Array<any>) {
+  // An observation can have "nested" observation values in the groupMembers field.
+  // If present, these values must also be merged recursively.
+  const newObs = updated.filter((obs) => !obs.uuid);
+  const updatedObs = original.map((originalObs) => {
+    const updatedObs = updated.find((obs) => obs.uuid === originalObs.uuid);
+    if (!updatedObs) {
+      return originalObs;
+    }
+
+    if (Array.isArray(originalObs.groupMembers) && Array.isArray(updatedObs.groupMembers)) {
+      return {
+        ...originalObs,
+        ...updatedObs,
+        groupMembers: mergeObservations(originalObs.groupMembers, updatedObs.groupMembers),
+      };
+    } else {
+      return {
+        ...originalObs,
+        ...updatedObs,
+      };
+    }
+  });
+  return [...newObs, ...updatedObs].filter((obs) => !obs.voided);
+}
+
+function mergeOrders(original: Array<any>, updated: Array<any>) {
+  const newOrders = updated.filter((order) => !order.uuid);
+  const updatedOrders = original.map((originalOrder) => ({
+    ...originalOrder,
+    ...updated.find((updatedOrder) => updatedOrder.uuid === originalOrder.uuid),
+  }));
+  return [...newOrders, ...updatedOrders].filter(
+    (order) => order.action.toLowerCase() === 'new' || order.action.toLowerCase() === 'revise',
+  );
 }
 
 export class FormEntryDb extends Dexie {
