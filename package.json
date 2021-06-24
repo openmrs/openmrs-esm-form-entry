@@ -29,14 +29,12 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
-    "dexie": "^3.0.3",
     "ngx-bootstrap": "5.6.x",
     "ngx-file-uploader": "0.0.18",
     "rxjs": "^6.5.3",
     "single-spa-angular": "^3.1.0",
     "systemjs-webpack-interop": "^2.3.6",
     "tslib": "^1.10.0",
-    "uuid": "^8.3.2",
     "zone.js": "~0.10.1"
   },
   "devDependencies": {
@@ -48,7 +46,6 @@
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "15.3.0",
-    "@types/uuid": "^8.3.0",
     "@types/webpack-env": "^1.16.0",
     "angular-http-server": "^1.9.0",
     "codelyzer": "^5.0.0",
