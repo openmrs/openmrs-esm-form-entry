@@ -4,7 +4,8 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { of as observableOf, Observable } from 'rxjs';
 import { map, flatMap, catchError } from 'rxjs/operators';
 import { WindowRef } from '../window-ref';
-import { getOfflineEncounterForForm, generateOfflineUuid } from '../../offline';
+import { getOfflineEncounterForForm } from '../../offline';
+import { generateOfflineUuid } from '@openmrs/esm-framework';
 
 @Injectable()
 export class EncounterResourceService {
