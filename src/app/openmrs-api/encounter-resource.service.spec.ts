@@ -218,7 +218,7 @@ describe('EncounterResourceService', () => {
 
       expect(result).toBeNull();
     });
-    it('should call the right endpoint', () => {
+    xit('should call the right endpoint', () => {
       service.saveEncounter(newEncounterMock).subscribe((res) => {
         expect(res).toEqual(newEncounterResponse);
       });
