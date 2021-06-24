@@ -1,4 +1,12 @@
-import { generateOfflineUuid, getSynchronizationItems, isOfflineUuid, QueueItemDescriptor, queueSynchronizationItem, setupOfflineSync, subscribeNetworkRequestFailed } from '@openmrs/esm-framework';
+import {
+  generateOfflineUuid,
+  getSynchronizationItems,
+  isOfflineUuid,
+  QueueItemDescriptor,
+  queueSynchronizationItem,
+  setupOfflineSync,
+  subscribeNetworkRequestFailed,
+} from '@openmrs/esm-framework';
 
 export interface QueuedEncounterRequest {
   url: string;
@@ -112,7 +120,7 @@ function setUuidObjectToString(obj: any, key: string) {
 
 async function findQueuedEncounterRequest(uuid: string) {
   const allEncounters = await getSynchronizationItems<QueuedEncounterRequest>(syncType);
-  return allEncounters.find(encounter => encounter.body.uuid === uuid);
+  return allEncounters.find((encounter) => encounter.body.uuid === uuid);
 }
 
 /**
