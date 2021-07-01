@@ -10,7 +10,7 @@ import { GetProvider, ListResult } from './types';
 
 @Injectable()
 export class ProviderResourceService {
-  private static readonly v = 'custom:(uuid,display)';
+  private static readonly v = 'custom:(uuid,display,person:(uuid))';
 
   constructor(
     protected http: HttpClient,

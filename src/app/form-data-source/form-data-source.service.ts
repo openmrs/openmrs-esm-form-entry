@@ -1,122 +1,46 @@
 import { Injectable } from '@angular/core';
-import { take, map, flatMap, catchError } from 'rxjs/operators';
+import { take, map } from 'rxjs/operators';
 
 import { ProviderResourceService } from '../openmrs-api/provider-resource.service';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
-// import { Provider } from '../../../models/provider.model';
-// import { Patient } from '../../../models/patient.model';
+
 import { LocationResourceService } from '../openmrs-api/location-resource.service';
 import { ConceptResourceService } from '../openmrs-api/concept-resource.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
-// import { ZscoreService } from '../../../shared/services/zscore.service';
+import { GetLocation, GetProvider } from '../openmrs-api/types';
+
 @Injectable()
 export class FormDataSourceService {
   constructor(
     private providerResourceService: ProviderResourceService,
     private locationResourceService: LocationResourceService,
     private conceptResourceService: ConceptResourceService,
-    private localStorageService: LocalStorageService, // private zscoreService: ZscoreService
+    private localStorageService: LocalStorageService,
   ) {}
 
   public getDataSources() {
-    const formData: any = {
-      location: this.getLocationDataSource(),
-      provider: this.getProviderDataSource(),
-      drug: this.getDrugDataSource(),
-      problem: this.getProblemDataSource(),
+    return {
+      location: {
+        resolveSelectedValue: this.getLocationByUuid.bind(this),
+        searchOptions: this.findLocation.bind(this),
+      },
+      provider: {
+        resolveSelectedValue: this.getProviderByUuid.bind(this),
+        searchOptions: this.findProvider.bind(this),
+      },
+      drug: {
+        resolveSelectedValue: this.resolveConcept.bind(this),
+        searchOptions: this.findDrug.bind(this),
+      },
+      problem: {
+        resolveSelectedValue: this.resolveConcept.bind(this),
+        searchOptions: this.findProblem.bind(this),
+      },
       conceptAnswers: this.getWhoStagingCriteriaDataSource(),
     };
-    return formData;
   }
 
-  public getLocationDataSource() {
-    const resolve = (uuid: string) => {
-      return this.getLocationByUuid(uuid);
-    };
-
-    const find = (text: string) => {
-      return this.findLocation(text);
-    };
-
-    return {
-      resolveSelectedValue: resolve,
-      searchOptions: find,
-    };
-  }
-
-  public getProviderDataSource() {
-    const resolve = (uuid: string) => {
-      return this.getProviderByUuid(uuid);
-    };
-    const find = (text: string) => {
-      return this.findProvider(text);
-    };
-
-    return {
-      resolveSelectedValue: resolve,
-      searchOptions: find,
-    };
-  }
-
-  public getDrugDataSource() {
-    const resolve = (uuid: string) => {
-      return this.resolveConcept(uuid);
-    };
-    const find = (text: string) => {
-      return this.findDrug(text);
-    };
-
-    return {
-      resolveSelectedValue: resolve,
-      searchOptions: find,
-    };
-  }
-
-  public getProblemDataSource() {
-    const resolve = (uuid: string) => {
-      return this.resolveConcept(uuid);
-    };
-    const find = (text: string) => {
-      return this.findProblem(text);
-    };
-
-    return {
-      resolveSelectedValue: resolve,
-      searchOptions: find,
-    };
-  }
-
-  public getConceptAnswersDataSource() {
-    const datasource = {
-      cachedOptions: [],
-      dataSourceOptions: {
-        concept: undefined,
-      },
-      resolveSelectedValue: undefined,
-      searchOptions: undefined,
-    };
-    const find = (uuid: string) => {
-      if (datasource.cachedOptions.length > 0) {
-        return Observable.create((observer: Subject<any>) => {
-          observer.next(datasource.cachedOptions);
-        });
-      }
-      const valuesObservable = this.getConceptAnswers(datasource.dataSourceOptions.concept);
-      valuesObservable.subscribe((results) => {
-        datasource.cachedOptions = results;
-      });
-      return valuesObservable;
-    };
-    const resolve = (uuid: string) => {
-      return this.resolveConcept(uuid);
-    };
-    datasource.resolveSelectedValue = resolve;
-    datasource.searchOptions = find;
-
-    return datasource;
-  }
-
-  public getWhoStagingCriteriaDataSource() {
+  private getWhoStagingCriteriaDataSource() {
     const sourceChangedSubject = new Subject();
 
     const datasource = {
@@ -129,6 +53,7 @@ export class FormDataSourceService {
       dataFromSourceChanged: sourceChangedSubject.asObservable(),
       changeConcept: undefined,
     };
+
     const find = (uuid: string) => {
       if (datasource.cachedOptions.length > 0) {
         return Observable.create((observer: Subject<any>) => {
@@ -141,9 +66,6 @@ export class FormDataSourceService {
       });
       return valuesObservable;
     };
-    const resolve = (uuid: string) => {
-      return this.resolveConcept(uuid);
-    };
 
     const changeConcept = (uuid: string) => {
       datasource.dataSourceOptions.concept = uuid;
@@ -154,7 +76,7 @@ export class FormDataSourceService {
       });
     };
 
-    datasource.resolveSelectedValue = resolve;
+    datasource.resolveSelectedValue = this.resolveConcept.bind(this);
     datasource.searchOptions = find;
     datasource.changeConcept = changeConcept;
 
@@ -162,25 +84,11 @@ export class FormDataSourceService {
   }
 
   public findProvider(searchText): Observable<any[]> {
-    const providerSearchResults: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+    const providerSearchResults = new BehaviorSubject<any[]>([]);
     const findProvider = this.providerResourceService.searchProvider(searchText);
     findProvider.subscribe(
-      (provider) => {
-        const selectedOptions = [];
-        const filtered = provider.filter((p: any) => {
-          if (p.person) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        const mappedProviders = filtered.map((p: any) => {
-          return {
-            value: p.uuid,
-            label: p.display,
-            providerUuid: p.uuid,
-          };
-        });
+      (providers) => {
+        const mappedProviders = providers.filter((p) => !!p.person).map(this.mapProvider);
         this.setCachedProviderSearchResults(mappedProviders);
         providerSearchResults.next(mappedProviders.slice(0, 10));
       },
@@ -192,100 +100,43 @@ export class FormDataSourceService {
   }
 
   public getProviderByUuid(uuid): Observable<any> {
-    const providerSearchResults: BehaviorSubject<any> = new BehaviorSubject<any>([]);
-    return this.providerResourceService
-      .getProviderByUuid(uuid)
-      .pipe(
-        map((provider) => {
-          return {
-            label: provider.display,
-            value: provider.uuid,
-            providerUuid: (provider as any).uuid,
-          };
-        }),
-      )
-      .pipe(
-        flatMap((mappedProvider) => {
-          providerSearchResults.next(mappedProvider);
-          return providerSearchResults.asObservable();
-        }),
-        catchError((error) => {
-          providerSearchResults.error(error); // test case that returns error
-          return providerSearchResults.asObservable();
-        }),
-      );
+    return this.providerResourceService.getProviderByUuid(uuid).pipe(map(this.mapProvider));
+  }
+
+  private mapProvider(provider: GetProvider) {
+    return {
+      label: provider.display,
+      value: provider.uuid,
+      providerUuid: (provider as any).uuid,
+    };
   }
 
   public getPatientObject(patient: any): object {
-    const model: any = {};
-    const gender = patient.person.gender;
-    const birthdate = patient.person.birthdate;
-    const age = patient.person.age;
-    model.sex = gender;
-    model.birthdate = birthdate;
-    model.age = age;
-
-    // zscore calculations addition
-    // reference date to today
-    // const refDate = new Date();
-    // const zscoreRef = this.zscoreService.getZRefByGenderAndAge(gender, birthdate, refDate);
-    // model['weightForHeightRef'] = zscoreRef.weightForHeightRef;
-    // model['heightForAgeRef'] = zscoreRef.heightForAgeRef;
-    // model['bmiForAgeRef'] = zscoreRef.bmiForAgeRef;
-
-    // // define gender based constant:
-    // if (gender === 'F') {
-    //   model['gendercreatconstant'] = 0.85;
-    // }
-    // if (gender === 'M') {
-    //   model['gendercreatconstant'] = 1;
-    // }
-
-    return model;
+    return {
+      sex: patient.person.gender,
+      birthdate: patient.person.birthdate,
+      age: patient.person.age,
+    };
   }
 
-  public findLocation(searchText): Observable<Location[]> {
-    const locationSearchResults: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-    this.locationResourceService.searchLocation(searchText).subscribe(
-      (locations) => {
-        console.log("Got locations: ", locations);
-        const mappedLocations = locations.map((l: any) => {
-          return {
-            value: l.uuid,
-            label: l.display,
-          };
-        });
-        locationSearchResults.next(mappedLocations.slice(0, 10));
-      },
-      (error) => {
-        locationSearchResults.error(error); // test case that returns error
-      },
+  public findLocation(searchText) {
+    return this.locationResourceService.searchLocation(searchText).pipe(
+      map((locations) => locations.map(this.mapLocation)),
+      take(10),
     );
-    return locationSearchResults.asObservable();
   }
 
-  public getLocationByUuid(uuid): Observable<any> {
-    const locationSearchResults: BehaviorSubject<any> = new BehaviorSubject<any>([]);
-    return this.locationResourceService
-      .getLocationByUuid(uuid)
-      .pipe(
-        map((location) => {
-          return {
-            label: location.display,
-            value: location.uuid,
-          };
-        }),
-      )
-      .pipe(
-        flatMap((mappedLocation) => {
-          locationSearchResults.next(mappedLocation);
-          return locationSearchResults.asObservable();
-        }),
-        catchError((error) => {
-          locationSearchResults.error(error);
-          return locationSearchResults.asObservable();
-        }),
-      );
+  public getLocationByUuid(uuid) {
+    return this.locationResourceService.getLocationByUuid(uuid).pipe(map(this.mapLocation));
+  }
+
+  private mapLocation(location?: GetLocation) {
+    return (
+      location && {
+        label: location.display,
+        value: location.uuid,
+      }
+    );
   }
 
   public resolveConcept(uuid): Observable<any> {

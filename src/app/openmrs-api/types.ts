@@ -10,4 +10,7 @@ export interface ListResult<T> {
 export interface GetProvider {
   uuid: string;
   display: string;
+  person?: {
+    uuid: string;
+  };
 }

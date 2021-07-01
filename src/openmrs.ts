@@ -16,7 +16,7 @@ function setupOpenMRS() {
     if (online) {
       const urlsToCache = [
         '/ws/rest/v1/location?q=&v=custom:(uuid,display)',
-        '/ws/rest/v1/provider?q=&v=custom:(uuid,display)',
+        '/ws/rest/v1/provider?q=&v=custom:(uuid,display,person:(uuid))',
       ];
 
       await Promise.all(
