@@ -49,31 +49,6 @@ describe('Service: FormDataSourceService', () => {
   });
 
   it(
-    'should  find provider when getProviderByPersonUuid is called' + ' with a person uuid',
-    inject(
-      [ProviderResourceService],
-      fakeAsync((providerResourceService: ProviderResourceService) => {
-        const service: FormDataSourceService = TestBed.get(FormDataSourceService);
-        const uuid = 'person-uuid-1';
-        spyOn(providerResourceService, 'getProviderByPersonUuid').and.callFake((params) => {
-          const subject = new ReplaySubject<any>();
-          subject.next({
-            person: {
-              uuid: 'uuid',
-              display: 'display',
-            },
-          });
-          return subject;
-        });
-
-        service.getProviderByPersonUuid(uuid);
-        tick(50);
-        expect(providerResourceService.getProviderByPersonUuid).toHaveBeenCalled();
-      }),
-    ),
-  );
-
-  it(
     'should find provider when getProviderByProviderUuid is called' + ' with a provider uuid',
     inject(
       [ProviderResourceService],

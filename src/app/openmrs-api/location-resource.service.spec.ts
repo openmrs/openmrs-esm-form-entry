@@ -4,13 +4,6 @@ import { HttpTestingController, HttpClientTestingModule, TestRequest } from '@an
 import { OpenmrsApiModule } from './openmrs-api.module';
 import { WindowRef } from '../window-ref';
 
-class MockCacheStorageService {
-  constructor(a, b) {}
-
-  public ready() {
-    return true;
-  }
-}
 describe('LocationResourceService:', () => {
   let service: LocationResourceService;
   let httpMock: HttpTestingController;
@@ -35,39 +28,6 @@ describe('LocationResourceService:', () => {
 
   it('should inject service', () => {
     expect(service).toBeDefined();
-  });
-
-  it('should fetch all locations', (done) => {
-    service.getLocations(true).subscribe((result) => {
-      expect(req.request.method).toBe('GET');
-      expect(req.request.urlWithParams).toContain('/ws/rest/v1/location?v=full');
-      done();
-    });
-    const req = httpMock.expectOne(windowRef.openmrsRestBase + 'location' + '?v=full');
-    req.flush([]);
-  });
-
-  it('should return an array of location object when getLocation is invoked', (done) => {
-    const results = [
-      {
-        uuid: 'uuid',
-        display: 'location',
-      },
-      {
-        uuid: 'uuid',
-        display: 'location',
-      },
-    ];
-    service.getLocations().subscribe((result) => {
-      expect(results).toContain({ uuid: 'uuid', display: 'location' });
-      expect(results).toBeDefined();
-      done();
-    });
-
-    const req = httpMock.expectOne(windowRef.openmrsRestBase + 'location' + '?v=full');
-    expect(req.request.method).toBe('GET');
-    expect(req.request.urlWithParams).toContain('/ws/rest/v1/location?v=full');
-    req.flush(results);
   });
 
   it('should return a location when the correct uuid is provided without v', (done) => {

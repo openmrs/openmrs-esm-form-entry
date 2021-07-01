@@ -29,24 +29,7 @@ export class FakeProviderResourceService {
     ]);
     return subject;
   }
-  public getProviderByPersonUuid(uuid: string): Observable<any> {
-    const subject = new BehaviorSubject<any>(null);
-    subject.next([
-      {
-        person: {
-          uuid: 'uuid',
-          display: 'display',
-        },
-      },
-      {
-        person: {
-          uuid: 'uuid',
-          display: 'display',
-        },
-      },
-    ]);
-    return subject;
-  }
+
   public searchProvider(searchText: string, cached: boolean = false, v: string = null): Observable<any> {
     const test: BehaviorSubject<any> = new BehaviorSubject<any>([]);
     const provider = [

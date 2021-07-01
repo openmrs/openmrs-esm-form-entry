@@ -163,7 +163,7 @@ export class FormDataSourceService {
 
   public findProvider(searchText): Observable<any[]> {
     const providerSearchResults: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-    const findProvider = this.providerResourceService.searchProvider(searchText, false);
+    const findProvider = this.providerResourceService.searchProvider(searchText);
     findProvider.subscribe(
       (provider) => {
         const selectedOptions = [];
@@ -194,7 +194,7 @@ export class FormDataSourceService {
   public getProviderByUuid(uuid): Observable<any> {
     const providerSearchResults: BehaviorSubject<any> = new BehaviorSubject<any>([]);
     return this.providerResourceService
-      .getProviderByUuid(uuid, false)
+      .getProviderByUuid(uuid)
       .pipe(
         map((provider) => {
           return {
@@ -214,23 +214,6 @@ export class FormDataSourceService {
           return providerSearchResults.asObservable();
         }),
       );
-  }
-  public getProviderByPersonUuid(uuid) {
-    const providerSearchResults: BehaviorSubject<any> = new BehaviorSubject<any>([]);
-    this.providerResourceService.getProviderByPersonUuid(uuid).subscribe(
-      (provider) => {
-        const mappedProvider = {
-          label: (provider as any).display,
-          value: (provider as any).person.uuid,
-          providerUuid: (provider as any).uuid,
-        };
-        providerSearchResults.next(mappedProvider);
-      },
-      (error) => {
-        providerSearchResults.error(error); // test case that returns error
-      },
-    );
-    return providerSearchResults.asObservable();
   }
 
   public getPatientObject(patient: any): object {
@@ -263,9 +246,9 @@ export class FormDataSourceService {
 
   public findLocation(searchText): Observable<Location[]> {
     const locationSearchResults: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-    const findLocation = this.locationResourceService.searchLocation(searchText, false);
-    findLocation.subscribe(
+    this.locationResourceService.searchLocation(searchText).subscribe(
       (locations) => {
+        console.log("Got locations: ", locations);
         const mappedLocations = locations.map((l: any) => {
           return {
             value: l.uuid,
@@ -284,7 +267,7 @@ export class FormDataSourceService {
   public getLocationByUuid(uuid): Observable<any> {
     const locationSearchResults: BehaviorSubject<any> = new BehaviorSubject<any>([]);
     return this.locationResourceService
-      .getLocationByUuid(uuid, false)
+      .getLocationByUuid(uuid)
       .pipe(
         map((location) => {
           return {
