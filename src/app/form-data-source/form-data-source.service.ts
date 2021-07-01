@@ -94,12 +94,14 @@ export class FormDataSourceService {
     return this.providerResourceService.getProviderByUuid(uuid).pipe(map(this.mapProvider));
   }
 
-  private mapProvider(provider: GetProvider) {
-    return {
-      label: provider.display,
-      value: provider.uuid,
-      providerUuid: (provider as any).uuid,
-    };
+  private mapProvider(provider?: GetProvider) {
+    return (
+      provider && {
+        label: provider.display,
+        value: provider.uuid,
+        providerUuid: provider.uuid,
+      }
+    );
   }
 
   public findLocation(searchText) {
@@ -122,23 +124,8 @@ export class FormDataSourceService {
     );
   }
 
-  public resolveConcept(uuid: string): Observable<any> {
-    return new Observable((observer) => {
-      this.conceptResourceService.getConceptByUuid(uuid).subscribe(
-        (result: any) => {
-          if (result) {
-            const mappedConcept = {
-              label: result.name.display,
-              value: result.uuid,
-            };
-            observer.next(mappedConcept);
-          }
-        },
-        (error) => {
-          observer.next(error);
-        },
-      );
-    });
+  public resolveConcept(uuid: string) {
+    return this.conceptResourceService.getConceptByUuid(uuid).pipe(map(this.mapConcept));
   }
 
   public getConceptAnswers(uuid: string) {
@@ -185,11 +172,13 @@ export class FormDataSourceService {
       );
   }
 
-  public mapConcept(concept: GetConcept) {
-    return {
-      value: concept.uuid,
-      label: concept.name.display,
-    };
+  public mapConcept(concept?: GetConcept) {
+    return (
+      concept && {
+        value: concept.uuid,
+        label: concept.name.display,
+      }
+    );
   }
 
   public getCachedProviderSearchResults(): any {
