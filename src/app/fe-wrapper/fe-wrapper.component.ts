@@ -280,10 +280,6 @@ export class FeWrapperComponent implements OnInit {
     this.dataSources.registerDataSource('problem', this.formDataSourceService.getDataSources().problem);
     this.dataSources.registerDataSource('personAttribute', this.formDataSourceService.getDataSources().location);
     this.dataSources.registerDataSource('conceptAnswers', this.formDataSourceService.getDataSources().conceptAnswers);
-
-    // TODO: Fix the patient datasource object to work with FHIR
-    // this.dataSources.registerDataSource('patient',
-    //   this.formDataSourceService.getPatientObject(this.patient), true);
   }
 
   private setDefaultValues() {

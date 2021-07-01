@@ -2,7 +2,7 @@ export interface ListResult<T> {
   results: Array<T>;
 }
 
- export interface GetLocation {
+export interface GetLocation {
   uuid: string;
   display: string;
 }
@@ -13,4 +13,16 @@ export interface GetProvider {
   person?: {
     uuid: string;
   };
+}
+
+export interface GetConcept {
+  uuid: string;
+  name: {
+    display: string;
+  };
+  conceptClass: {
+    uuid: string;
+  };
+  answers: Array<GetConcept>;
+  setMembers: Array<GetConcept>;
 }

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { take, map } from 'rxjs/operators';
+
+import { take, map, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 
 import { ProviderResourceService } from '../openmrs-api/provider-resource.service';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
-
 import { LocationResourceService } from '../openmrs-api/location-resource.service';
 import { ConceptResourceService } from '../openmrs-api/concept-resource.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
-import { GetLocation, GetProvider } from '../openmrs-api/types';
+import { GetConcept, GetLocation, GetProvider } from '../openmrs-api/types';
 
 @Injectable()
 export class FormDataSourceService {
@@ -84,22 +84,13 @@ export class FormDataSourceService {
   }
 
   public findProvider(searchText): Observable<any[]> {
-    const providerSearchResults = new BehaviorSubject<any[]>([]);
-    const findProvider = this.providerResourceService.searchProvider(searchText);
-    findProvider.subscribe(
-      (providers) => {
-        const mappedProviders = providers.filter((p) => !!p.person).map(this.mapProvider);
-        this.setCachedProviderSearchResults(mappedProviders);
-        providerSearchResults.next(mappedProviders.slice(0, 10));
-      },
-      (error) => {
-        providerSearchResults.error(error); // test case that returns error
-      },
+    return this.providerResourceService.searchProvider(searchText).pipe(
+      map((providers) => providers.filter((p) => !!p.person).map(this.mapProvider)),
+      tap((result) => this.setCachedProviderSearchResults(result)),
     );
-    return providerSearchResults.asObservable();
   }
 
-  public getProviderByUuid(uuid): Observable<any> {
+  public getProviderByUuid(uuid: string): Observable<any> {
     return this.providerResourceService.getProviderByUuid(uuid).pipe(map(this.mapProvider));
   }
 
@@ -111,14 +102,6 @@ export class FormDataSourceService {
     };
   }
 
-  public getPatientObject(patient: any): object {
-    return {
-      sex: patient.person.gender,
-      birthdate: patient.person.birthdate,
-      age: patient.person.age,
-    };
-  }
-
   public findLocation(searchText) {
     return this.locationResourceService.searchLocation(searchText).pipe(
       map((locations) => locations.map(this.mapLocation)),
@@ -126,7 +109,7 @@ export class FormDataSourceService {
     );
   }
 
-  public getLocationByUuid(uuid) {
+  public getLocationByUuid(uuid: string) {
     return this.locationResourceService.getLocationByUuid(uuid).pipe(map(this.mapLocation));
   }
 
@@ -139,7 +122,7 @@ export class FormDataSourceService {
     );
   }
 
-  public resolveConcept(uuid): Observable<any> {
+  public resolveConcept(uuid: string): Observable<any> {
     return new Observable((observer) => {
       this.conceptResourceService.getConceptByUuid(uuid).subscribe(
         (result: any) => {
@@ -158,88 +141,55 @@ export class FormDataSourceService {
     });
   }
 
-  public getConceptAnswers(uuid) {
-    const conceptResult: BehaviorSubject<any> = new BehaviorSubject<any>({});
-    const v = 'custom:(uuid,name,conceptClass,answers)';
-    this.conceptResourceService
-      .getConceptByUuid(uuid, true, v)
-      .pipe(take(1))
-      .subscribe(
-        (result) => {
-          const mappedConcepts = this.mapConcepts(result.answers);
-          conceptResult.next(mappedConcepts);
-        },
-        (error) => {
-          conceptResult.error(error);
-        },
-      );
-    return conceptResult.asObservable();
+  public getConceptAnswers(uuid: string) {
+    return this.conceptResourceService
+      .getConceptByUuid(uuid)
+      .pipe(map((concept) => concept.answers.map(this.mapConcept)));
   }
 
-  public getConceptSetMembers(uuid) {
-    const conceptResult: BehaviorSubject<any> = new BehaviorSubject<any>({});
-    const v = 'custom:(uuid,name,conceptClass,setMembers)';
-    this.conceptResourceService.getConceptByUuid(uuid, true, v).subscribe(
-      (result) => {
-        let mappedConcepts: Array<any> = this.mapConcepts(result.setMembers);
-        mappedConcepts = mappedConcepts.sort((a, b) => {
-          return a.label > b.label ? 1 : 0;
-        });
-        conceptResult.next(mappedConcepts);
-      },
-      (error) => {
-        conceptResult.error(error);
-      },
-    );
-    return conceptResult.asObservable();
+  public getConceptSetMembers(uuid: string) {
+    return this.conceptResourceService
+      .getConceptByUuid(uuid)
+      .pipe(map((concept) => concept.setMembers.map(this.mapConcept).sort((a, b) => (a.label > b.label ? 1 : 0))));
   }
 
   public findDrug(searchText) {
-    const conceptResults: BehaviorSubject<any> = new BehaviorSubject<any>([]);
-    this.conceptResourceService.searchConcept(searchText).subscribe((concepts) => {
-      const filtered = concepts.filter((concept: any) => {
-        if (concept.conceptClass && concept.conceptClass.uuid === '8d490dfc-c2cc-11de-8d13-0010c6dffd0f') {
-          return true;
-        } else {
-          return false;
-        }
-      });
-      const mappedDrugs = this.mapConcepts(filtered);
-      conceptResults.next(mappedDrugs);
-    });
-    return conceptResults.asObservable();
+    const drugClass = '8d490dfc-c2cc-11de-8d13-0010c6dffd0f';
+    return this.conceptResourceService
+      .searchConcept(searchText)
+      .pipe(
+        map((concepts) =>
+          concepts
+            .filter((concept) => concept.conceptClass && concept.conceptClass.uuid === drugClass)
+            .map(this.mapConcept),
+        ),
+      );
   }
 
   public findProblem(searchText) {
-    const conceptResults: BehaviorSubject<any> = new BehaviorSubject<any>([]);
-    this.conceptResourceService.searchConcept(searchText).subscribe((concepts) => {
-      const filtered = concepts.filter((concept: any) => {
-        if (concept.conceptClass && concept.conceptClass.uuid === '8d4918b0-c2cc-11de-8d13-0010c6dffd0f') {
-          return true;
-        }
-        if (concept.conceptClass && concept.conceptClass.uuid === '8d492b2a-c2cc-11de-8d13-0010c6dffd0f') {
-          return true;
-        }
-        if (concept.conceptClass && concept.conceptClass.uuid === '8d492954-c2cc-11de-8d13-0010c6dffd0f') {
-          return true;
-        }
-        if (concept.conceptClass && concept.conceptClass.uuid === '8d491a9a-c2cc-11de-8d13-0010c6dffd0f') {
-          return true;
-        }
-      });
-      const mappedProblems = this.mapConcepts(filtered);
-      conceptResults.next(mappedProblems);
-    });
-    return conceptResults.asObservable();
+    const allowedConceptClasses = [
+      '8d4918b0-c2cc-11de-8d13-0010c6dffd0f',
+      '8d492b2a-c2cc-11de-8d13-0010c6dffd0f',
+      '8d492954-c2cc-11de-8d13-0010c6dffd0f',
+      '8d491a9a-c2cc-11de-8d13-0010c6dffd0f',
+    ];
+
+    return this.conceptResourceService
+      .searchConcept(searchText)
+      .pipe(
+        map((concepts) =>
+          concepts
+            .filter((concept) => concept.conceptClass && allowedConceptClasses.includes(concept.conceptClass.uuid))
+            .map(this.mapConcept),
+        ),
+      );
   }
-  public mapConcepts(concepts) {
-    const mappedConcepts = concepts.map((concept) => {
-      return {
-        value: concept.uuid,
-        label: concept.name.display,
-      };
-    });
-    return mappedConcepts;
+
+  public mapConcept(concept: GetConcept) {
+    return {
+      value: concept.uuid,
+      label: concept.name.display,
+    };
   }
 
   public getCachedProviderSearchResults(): any {
