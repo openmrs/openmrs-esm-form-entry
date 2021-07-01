@@ -63,6 +63,7 @@ export async function setupOfflineEncounterSync() {
 
     setUuidObjectToString(body, 'patient');
     setUuidObjectToString(body, 'form');
+    setUuidObjectToString(body, 'location');
 
     for (const obs of body.obs || []) {
       setUuidObjectToString(obs, 'concept');
@@ -70,6 +71,10 @@ export async function setupOfflineEncounterSync() {
       for (const groupMember of obs.groupMembers || []) {
         setUuidObjectToString(groupMember, 'concept');
       }
+    }
+
+    for (const provider of body.encounterProviders || []) {
+      setUuidObjectToString(provider, 'provider');
     }
 
     const res = await fetch(item.url, {
@@ -94,6 +99,7 @@ export async function getOfflineEncounterForForm(uuid: string) {
 
   setUuidStringToObject(body, 'patient');
   setUuidStringToObject(body, 'form');
+  setUuidStringToObject(body, 'location');
 
   for (const obs of body.obs || []) {
     setUuidStringToObject(obs, 'concept');
@@ -101,6 +107,10 @@ export async function getOfflineEncounterForForm(uuid: string) {
     for (const groupMember of obs.groupMembers || []) {
       setUuidStringToObject(groupMember, 'concept');
     }
+  }
+
+  for (const provider of body.encounterProviders || []) {
+    setUuidStringToObject(provider, 'provider');
   }
 
   return body;
