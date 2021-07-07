@@ -33,11 +33,6 @@ function setupOpenMRS() {
 
   messageOmrsServiceWorker({
     type: 'registerDynamicRoute',
-    pattern: '.+/ws/rest/v1/location?q=&v=custom:(uuid,display)',
-  });
-
-  messageOmrsServiceWorker({
-    type: 'registerDynamicRoute',
     pattern: '.+/ws/rest/v1/clobdata/.+',
   });
 
