@@ -14,7 +14,7 @@ export class LocationResourceService {
   constructor(protected http: HttpClient, protected windowRef: WindowRef) {}
 
   public getLocationByUuid(uuid: string): Observable<GetLocation | undefined> {
-    const url = this.windowRef.openmrsRestBase + 'location/' + uuid + '?v=' + LocationResourceService.v;
+    const url = this.getUrl(uuid);
     return this.http.get<GetLocation>(url).pipe(catchError(() => this.getLocationByUuidFallback(uuid)));
   }
 
@@ -31,7 +31,13 @@ export class LocationResourceService {
   }
 
   private getAllLocations(): Observable<Array<GetLocation>> {
-    const url = this.windowRef.openmrsRestBase + 'location?q=&v=' + LocationResourceService.v;
+    const url = this.getUrl();
     return this.http.get<ListResult<GetLocation>>(url).pipe(map((r) => r.results));
+  }
+
+  public getUrl(uuid?: string) {
+    return uuid
+      ? this.windowRef.openmrsRestBase + 'location/' + uuid + '?v=' + LocationResourceService.v
+      : this.windowRef.openmrsRestBase + 'location?q=&v=' + LocationResourceService.v;
   }
 }

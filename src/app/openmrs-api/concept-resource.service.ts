@@ -2,24 +2,61 @@ import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { WindowRef } from '../window-ref';
-import { GetConcept } from './types';
 
 @Injectable()
 export class ConceptResourceService {
-  private static readonly v = 'custom:(uuid,name,conceptClass,answers,setMembers)';
+  public v = 'custom:(uuid,name,conceptClass,answers)';
 
   constructor(protected http: HttpClient, protected windowRef: WindowRef) {}
 
-  public searchConcept(searchText: string): Observable<Array<GetConcept>> {
-    const url = this.windowRef.openmrsRestBase + 'concept?q=' + searchText + '&v=' + ConceptResourceService.v;
-    return this.http.get<any>(url).pipe(map((response) => response.results));
+  public getUrl(): string {
+    return this.windowRef.openmrsRestBase + 'concept';
   }
 
-  public getConceptByUuid(uuid: string): Observable<GetConcept | undefined> {
-    const url = this.windowRef.openmrsRestBase + 'concept/' + uuid + '?v=' + ConceptResourceService.v;
-    return this.http.get<GetConcept | undefined>(url);
+  public searchConcept(searchText: string, cached: boolean = false, v: string = null): Observable<any> {
+    const url = this.getUrl();
+    const params: HttpParams = new HttpParams().set('q', searchText).set('v', v && v.length > 0 ? v : this.v);
+
+    return this.http
+      .get<any>(url, {
+        params,
+      })
+      .pipe(
+        map((response) => {
+          return response.results;
+        }),
+      );
+  }
+
+  public getConceptByUuid(uuid: string, cached: boolean = false, v: string = this.v): Observable<any> {
+    let url = this.getUrl();
+    url += '/' + uuid;
+    const params: HttpParams = new HttpParams().set('v', v && v.length > 0 ? v : this.v);
+    return this.http.get(url, {
+      params,
+    });
+  }
+  public getConceptByConceptClassesUuid(searchText, conceptClassesUuidArray) {
+    let filteredConceptResults = [];
+    const response = this.searchConcept(searchText);
+    response.pipe(take(1)).subscribe(
+      (concepts) => {
+        filteredConceptResults = this.filterResultsByConceptClassesUuid(concepts, conceptClassesUuidArray);
+      },
+      (error) => {},
+    );
+    return filteredConceptResults;
+  }
+  public filterResultsByConceptClassesUuid(results, conceptClassesUuidArray) {
+    const res = results.filter((result: any) => {
+      return conceptClassesUuidArray.find((uuid) => {
+        return result.conceptClass.uuid === uuid;
+      });
+    });
+    return res;
   }
 }

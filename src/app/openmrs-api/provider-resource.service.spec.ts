@@ -26,46 +26,43 @@ describe('Service : ProviderResourceService Unit Tests', () => {
 
   it('should be injected with all dependencies', () => {
     expect(providerResourceService).toBeTruthy();
-    expect(providerResourceService.getUrl()).toBeDefined();
   });
 
-  it('should return a provider when the correct uuid is provided without v', (done) => {
+  it('should return a provider when the correct uuid is provided', (done) => {
     const providerUuid = 'xxx-xxx-xxx-xxx';
+
     providerResourceService.getProviderByUuid(providerUuid).subscribe((response) => {
       expect(req.request.method).toBe('GET');
-      expect(req.request.urlWithParams).toContain(`provider/${providerUuid}?v=full`);
       done();
     });
 
-    const req = httpMock.expectOne(`${providerResourceService.getUrl()}/${providerUuid}?v=full`);
+    const req = httpMock.expectOne(providerResourceService.getUrl(providerUuid));
     req.flush(JSON.stringify({}));
   });
 
-  it('should return a provider when the correct uuid is provided with v', (done) => {
-    const providerUuid = 'xxx-xxx-xxx-xxx';
-    providerResourceService.getProviderByUuid(providerUuid, false, '9').subscribe((response) => {
-      expect(req.request.method).toBe('GET');
-      expect(req.request.urlWithParams).toContain(`provider/${providerUuid}?v=9`);
-      done();
-    });
-    const req = httpMock.expectOne(`${providerResourceService.getUrl()}/${providerUuid}?v=9`);
-    req.flush(JSON.stringify({}));
-  });
-
-  it('should return a list of providers a matching search string is provided without v', (done) => {
+  it('should return a list of providers a matching search string is provided', (done) => {
     const searchText = 'test';
-    const results = [
-      {
-        uuid: 'uuid',
-        identifier: '',
-      },
-    ];
-    providerResourceService.searchProvider(searchText).subscribe((data) => {
-      expect(req.request.method).toBe('GET');
-      expect(req.request.urlWithParams).toContain(`provider?q=${searchText}&v=full`);
+    const results = {
+      results: [
+        {
+          uuid: 'uuid',
+          display: 'test',
+        },
+        {
+          uuid: 'uuid',
+          display: 'other',
+        },
+      ],
+    };
+
+    providerResourceService.searchProvider(searchText).subscribe((providers) => {
+      for (const provider of providers) {
+        expect(provider.display).toContain('test');
+      }
       done();
     });
-    const req = httpMock.expectOne(providerResourceService.getUrl() + '?q=' + searchText + '&v=full');
-    req.flush(JSON.stringify(results));
+
+    const req = httpMock.expectOne(providerResourceService.getUrl());
+    req.flush(results);
   });
 });

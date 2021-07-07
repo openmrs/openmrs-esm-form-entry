@@ -39,4 +39,10 @@ export class ProviderResourceService {
     const url = this.windowRef.openmrsRestBase + 'provider?q=&v=' + ProviderResourceService.v;
     return this.http.get<ListResult<GetProvider>>(url).pipe(map((r) => r.results));
   }
+
+  public getUrl(uuid?: string) {
+    return uuid
+      ? this.windowRef.openmrsRestBase + 'provider/' + uuid + '?v=' + ProviderResourceService.v
+      : this.windowRef.openmrsRestBase + 'provider?q=&v=' + ProviderResourceService.v;
+  }
 }
