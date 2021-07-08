@@ -1,6 +1,10 @@
 import { setPublicPath } from 'systemjs-webpack-interop';
-import { messageOmrsServiceWorker, openmrsFetch, subscribeConnectivity } from '@openmrs/esm-framework';
-import { setupOfflineEncounterSync, setupEncounterRequestInterceptors } from './offline';
+import { messageOmrsServiceWorker } from '@openmrs/esm-framework';
+import {
+  setupOfflineEncounterSync,
+  setupEncounterRequestInterceptors,
+  setupOfflineDataSourcePrecaching,
+} from './offline';
 
 setPublicPath('@openmrs/esm-form-entry-app');
 
@@ -10,26 +14,7 @@ const importTranslation = require.context('../translations', false, /.json$/, 'l
 function setupOpenMRS() {
   setupEncounterRequestInterceptors();
   setupOfflineEncounterSync();
-
-  // TODO: This event must be replaced with a better one, e.g. sth like "subscribePrecache".
-  subscribeConnectivity(async ({ online }) => {
-    if (online) {
-      const urlsToCache = [
-        '/ws/rest/v1/location?q=&v=custom:(uuid,display)',
-        '/ws/rest/v1/provider?q=&v=custom:(uuid,display,person:(uuid))',
-      ];
-
-      await Promise.all(
-        urlsToCache.map(async (url) => {
-          await messageOmrsServiceWorker({
-            type: 'registerDynamicRoute',
-            pattern: '.+' + url,
-          });
-          await openmrsFetch(url);
-        }),
-      );
-    }
-  });
+  setupOfflineDataSourcePrecaching();
 
   messageOmrsServiceWorker({
     type: 'registerDynamicRoute',
