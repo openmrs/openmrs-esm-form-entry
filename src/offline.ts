@@ -93,7 +93,7 @@ export async function setupOfflineEncounterSync() {
       setUuidObjectToString(provider, 'provider');
     }
 
-    if (associatedOfflineVisit && !body.encounterDatetime) {
+    if (associatedOfflineVisit && body.visit === associatedOfflineVisit.id && !body.encounterDatetime) {
       body.encounterDatetime = associatedOfflineVisit.stopDatetime;
     }
 
@@ -112,10 +112,12 @@ export async function setupOfflineEncounterSync() {
 async function queueEncounterRequest(item: QueuedEncounterRequest) {
   const descriptor: QueueItemDescriptor = {
     id: item.body.uuid,
-    dependencies: [{
-      type: 'visit',
-      id: item.body.visit,
-    }],
+    dependencies: [
+      {
+        type: 'visit',
+        id: item.body.visit,
+      },
+    ],
   };
   await queueSynchronizationItem(syncType, item, descriptor);
 }
