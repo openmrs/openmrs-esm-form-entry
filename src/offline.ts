@@ -9,6 +9,7 @@ import {
   setupOfflineSync,
   subscribeNetworkRequestFailed,
   subscribePrecacheStaticDependencies,
+  Visit,
 } from '@openmrs/esm-framework';
 
 export interface QueuedEncounterRequest {
@@ -70,16 +71,9 @@ export function setupOfflineDataSourcePrecaching() {
   });
 }
 
-async function queueEncounterRequest(item: QueuedEncounterRequest) {
-  const descriptor: QueueItemDescriptor = {
-    id: item.body.uuid,
-    dependencies: [],
-  };
-  await queueSynchronizationItem(syncType, item, descriptor);
-}
-
 export async function setupOfflineEncounterSync() {
-  setupOfflineSync<QueuedEncounterRequest>(syncType, ['visit'], async (item) => {
+  setupOfflineSync<QueuedEncounterRequest>(syncType, ['visit'], async (item, options) => {
+    const associatedOfflineVisit: Visit | undefined = options.dependencies[0];
     const body = { ...item.body };
     removeAllOfflineUuids(body);
 
@@ -99,6 +93,10 @@ export async function setupOfflineEncounterSync() {
       setUuidObjectToString(provider, 'provider');
     }
 
+    if (associatedOfflineVisit && !body.encounterDatetime) {
+      body.encounterDatetime = associatedOfflineVisit.stopDatetime;
+    }
+
     const res = await fetch(item.url, {
       method: item.method,
       headers: item.headers,
@@ -109,6 +107,17 @@ export async function setupOfflineEncounterSync() {
       throw new Error(`Failed to synchronize the form encounter ${JSON.stringify(body)}. Error: ${await res.text()}`);
     }
   });
+}
+
+async function queueEncounterRequest(item: QueuedEncounterRequest) {
+  const descriptor: QueueItemDescriptor = {
+    id: item.body.uuid,
+    dependencies: [{
+      type: 'visit',
+      id: item.body.visit,
+    }],
+  };
+  await queueSynchronizationItem(syncType, item, descriptor);
 }
 
 export async function getOfflineEncounterForForm(uuid: string) {
