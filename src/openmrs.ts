@@ -1,6 +1,10 @@
 import { setPublicPath } from 'systemjs-webpack-interop';
 import { messageOmrsServiceWorker } from '@openmrs/esm-framework';
-import { setupOfflineEncounterSync, setupEncounterRequestInterceptors } from './offline';
+import {
+  setupOfflineEncounterSync,
+  setupEncounterRequestInterceptors,
+  setupOfflineDataSourcePrecaching,
+} from './offline';
 
 setPublicPath('@openmrs/esm-form-entry-app');
 
@@ -10,10 +14,11 @@ const importTranslation = require.context('../translations', false, /.json$/, 'l
 function setupOpenMRS() {
   setupEncounterRequestInterceptors();
   setupOfflineEncounterSync();
+  setupOfflineDataSourcePrecaching();
 
   messageOmrsServiceWorker({
     type: 'registerDynamicRoute',
-    pattern: '.+/visit.+',
+    pattern: '.+/ws/rest/v1/clobdata/.+',
   });
 
   messageOmrsServiceWorker({

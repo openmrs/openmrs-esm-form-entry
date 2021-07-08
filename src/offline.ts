@@ -2,10 +2,14 @@ import {
   generateOfflineUuid,
   getSynchronizationItems,
   isOfflineUuid,
+  messageOmrsServiceWorker,
+  openmrsFetch,
   QueueItemDescriptor,
   queueSynchronizationItem,
   setupOfflineSync,
   subscribeNetworkRequestFailed,
+  subscribePrecacheStaticDependencies,
+  Visit,
 } from '@openmrs/esm-framework';
 
 export interface QueuedEncounterRequest {
@@ -48,21 +52,34 @@ export function setupEncounterRequestInterceptors() {
   });
 }
 
-async function queueEncounterRequest(item: QueuedEncounterRequest) {
-  const descriptor: QueueItemDescriptor = {
-    id: item.body.uuid,
-    dependencies: [],
-  };
-  await queueSynchronizationItem(syncType, item, descriptor);
+export function setupOfflineDataSourcePrecaching() {
+  subscribePrecacheStaticDependencies(async () => {
+    const urlsToCache = [
+      '/ws/rest/v1/location?q=&v=custom:(uuid,display)',
+      '/ws/rest/v1/provider?q=&v=custom:(uuid,display,person:(uuid))',
+    ];
+
+    await Promise.all(
+      urlsToCache.map(async (url) => {
+        await messageOmrsServiceWorker({
+          type: 'registerDynamicRoute',
+          pattern: '.+' + url,
+        });
+        await openmrsFetch(url);
+      }),
+    );
+  });
 }
 
 export async function setupOfflineEncounterSync() {
-  setupOfflineSync<QueuedEncounterRequest>(syncType, ['visit'], async (item) => {
+  setupOfflineSync<QueuedEncounterRequest>(syncType, ['visit'], async (item, options) => {
+    const associatedOfflineVisit: Visit | undefined = options.dependencies[0];
     const body = { ...item.body };
     removeAllOfflineUuids(body);
 
     setUuidObjectToString(body, 'patient');
     setUuidObjectToString(body, 'form');
+    setUuidObjectToString(body, 'location');
 
     for (const obs of body.obs || []) {
       setUuidObjectToString(obs, 'concept');
@@ -70,6 +87,14 @@ export async function setupOfflineEncounterSync() {
       for (const groupMember of obs.groupMembers || []) {
         setUuidObjectToString(groupMember, 'concept');
       }
+    }
+
+    for (const provider of body.encounterProviders || []) {
+      setUuidObjectToString(provider, 'provider');
+    }
+
+    if (associatedOfflineVisit && body.visit === associatedOfflineVisit.id && !body.encounterDatetime) {
+      body.encounterDatetime = associatedOfflineVisit.stopDatetime;
     }
 
     const res = await fetch(item.url, {
@@ -84,6 +109,19 @@ export async function setupOfflineEncounterSync() {
   });
 }
 
+async function queueEncounterRequest(item: QueuedEncounterRequest) {
+  const descriptor: QueueItemDescriptor = {
+    id: item.body.uuid,
+    dependencies: [
+      {
+        type: 'visit',
+        id: item.body.visit,
+      },
+    ],
+  };
+  await queueSynchronizationItem(syncType, item, descriptor);
+}
+
 export async function getOfflineEncounterForForm(uuid: string) {
   const item = await findQueuedEncounterRequest(uuid);
   const body = item && item.body;
@@ -94,6 +132,7 @@ export async function getOfflineEncounterForForm(uuid: string) {
 
   setUuidStringToObject(body, 'patient');
   setUuidStringToObject(body, 'form');
+  setUuidStringToObject(body, 'location');
 
   for (const obs of body.obs || []) {
     setUuidStringToObject(obs, 'concept');
@@ -101,6 +140,10 @@ export async function getOfflineEncounterForForm(uuid: string) {
     for (const groupMember of obs.groupMembers || []) {
       setUuidStringToObject(groupMember, 'concept');
     }
+  }
+
+  for (const provider of body.encounterProviders || []) {
+    setUuidStringToObject(provider, 'provider');
   }
 
   return body;

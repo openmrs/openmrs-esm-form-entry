@@ -4,13 +4,6 @@ import { HttpTestingController, HttpClientTestingModule, TestRequest } from '@an
 import { OpenmrsApiModule } from './openmrs-api.module';
 import { WindowRef } from '../window-ref';
 
-class MockCacheStorageService {
-  constructor(a, b) {}
-
-  public ready() {
-    return true;
-  }
-}
 describe('LocationResourceService:', () => {
   let service: LocationResourceService;
   let httpMock: HttpTestingController;
@@ -37,40 +30,7 @@ describe('LocationResourceService:', () => {
     expect(service).toBeDefined();
   });
 
-  it('should fetch all locations', (done) => {
-    service.getLocations(true).subscribe((result) => {
-      expect(req.request.method).toBe('GET');
-      expect(req.request.urlWithParams).toContain('/ws/rest/v1/location?v=full');
-      done();
-    });
-    const req = httpMock.expectOne(windowRef.openmrsRestBase + 'location' + '?v=full');
-    req.flush([]);
-  });
-
-  it('should return an array of location object when getLocation is invoked', (done) => {
-    const results = [
-      {
-        uuid: 'uuid',
-        display: 'location',
-      },
-      {
-        uuid: 'uuid',
-        display: 'location',
-      },
-    ];
-    service.getLocations().subscribe((result) => {
-      expect(results).toContain({ uuid: 'uuid', display: 'location' });
-      expect(results).toBeDefined();
-      done();
-    });
-
-    const req = httpMock.expectOne(windowRef.openmrsRestBase + 'location' + '?v=full');
-    expect(req.request.method).toBe('GET');
-    expect(req.request.urlWithParams).toContain('/ws/rest/v1/location?v=full');
-    req.flush(results);
-  });
-
-  it('should return a location when the correct uuid is provided without v', (done) => {
+  it('should return a location when the correct uuid is provided', (done) => {
     const locationUuid = 'xxx-xxx-xxx-xxx';
     const results = [
       {
@@ -83,79 +43,36 @@ describe('LocationResourceService:', () => {
     service.getLocationByUuid(locationUuid).subscribe((result) => {
       expect(results[0].uuid).toBe('xxx-xxx-xxx-xxx');
       expect(req.request.method).toBe('GET');
-      expect(req.request.urlWithParams).toContain(
-        windowRef.openmrsRestBase + 'location' + '/' + locationUuid + '?v=full',
-      );
       done();
     });
 
     // stubbing
-    req = httpMock.expectOne(windowRef.openmrsRestBase + 'location' + '/' + locationUuid + '?v=full');
+    req = httpMock.expectOne(service.getUrl(locationUuid));
     req.flush(results);
   });
 
-  it('should return a location when the correct uuid is provided with v', (done) => {
-    const locationUuid = 'xxx-xxx-xxx-xxx';
-    const results = [
-      {
-        uuid: 'xxx-xxx-xxx-xxx',
-        display: 'location',
-      },
-    ];
-    let req: TestRequest;
-    service.getLocationByUuid(locationUuid, false, '9').subscribe((response) => {
-      expect(req.request.method).toBe('GET');
-      expect(req.request.urlWithParams).toContain(`location/${locationUuid}?v=9`);
-      done();
-    });
-
-    // stubbing
-    req = httpMock.expectOne(windowRef.openmrsRestBase + 'location' + '/' + locationUuid + '?v=9');
-    req.flush(results);
-  });
-
-  it('should return a list of locations matching search string provided without v', (done) => {
+  it('should return a list of locations matching search string provided', (done) => {
     const searchText = 'test';
-    const results = [
-      {
-        uuid: 'uuid',
-        display: '',
-      },
-      {
-        uuid: 'uuid',
-        display: '',
-      },
-    ];
-    service.searchLocation(searchText).subscribe((data) => {
-      expect(req.request.method).toBe('GET');
-      expect(req.request.urlWithParams).toContain(
-        windowRef.openmrsRestBase + 'location' + '?q=' + searchText + '&v=full',
-      );
+    const results = {
+      results: [
+        {
+          uuid: 'uuid',
+          display: 'test',
+        },
+        {
+          uuid: 'uuid',
+          display: 'other',
+        },
+      ],
+    };
+    service.searchLocation(searchText).subscribe((locations) => {
+      for (const location of locations) {
+        expect(location.display).toContain(searchText);
+      }
       done();
     });
 
-    const req = httpMock.expectOne(windowRef.openmrsRestBase + 'location' + '?q=' + searchText + '&v=full');
-    req.flush(results);
-  });
-  it('should return a list of locations matching search string provided with v', (done) => {
-    const searchText = 'test';
-    const results = [
-      {
-        uuid: 'uuid',
-        display: '',
-      },
-      {
-        uuid: 'uuid',
-        display: '',
-      },
-    ];
-    service.searchLocation(searchText, false, '9').subscribe((data) => {
-      expect(req.request.method).toBe('GET');
-      expect(req.request.urlWithParams).toContain(windowRef.openmrsRestBase + 'location' + '?q=' + searchText + '&v=9');
-      done();
-    });
-
-    const req = httpMock.expectOne(windowRef.openmrsRestBase + 'location' + '?q=' + searchText + '&v=9');
+    const req = httpMock.expectOne(service.getUrl());
     req.flush(results);
   });
 });
