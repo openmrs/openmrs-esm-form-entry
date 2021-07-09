@@ -4,7 +4,7 @@ import { FormSchemaService } from './form-schema.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormResourceService } from '../openmrs-api/form-resource.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
-import { FormSchemaCompiler } from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
+import { FormSchemaCompiler } from '@ampath-kenya/ngx-formentry';
 
 describe('Service: FormSchemaService', () => {
   let formSchemaService: FormSchemaService;

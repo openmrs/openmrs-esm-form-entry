@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { throwError as observableThrowError, forkJoin, Observable, Subject, of } from 'rxjs';
 import { catchError, first } from 'rxjs/operators';
-import { EncounterAdapter, PersonAttribuAdapter, Form } from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
+import { EncounterAdapter, PersonAttribuAdapter, Form } from '@ampath-kenya/ngx-formentry';
 import { EncounterResourceService } from '../openmrs-api/encounter-resource.service';
 import { PersonResourceService } from '../openmrs-api/person-resource.service';
 import { FormDataSourceService } from '../form-data-source/form-data-source.service';

@@ -6,7 +6,7 @@ import {
   FormFactory,
   Form,
   DataSources,
-} from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
+} from '@ampath-kenya/ngx-formentry';
 import { FormDataSourceService } from '../form-data-source/form-data-source.service';
 // import { FileUploadResourceService } from '../../../etl-api/file-upload-resource.service';
 // import { Patient } from 'src/app/models/patient.model';
