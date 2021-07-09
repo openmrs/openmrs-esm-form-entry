@@ -1,4 +1,4 @@
-import { TestBed, async, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { FormResourceService } from './form-resource.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { LocalStorageService } from '../local-storage/local-storage.service';
@@ -10,7 +10,7 @@ describe('FormResourceService Unit Tests', () => {
   let httpMock: HttpTestingController;
   let winRef: WindowRef;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [],

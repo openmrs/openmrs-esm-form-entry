@@ -1,4 +1,4 @@
-import { TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, inject, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { LocationResourceService } from './location-resource.service';
 import { HttpTestingController, HttpClientTestingModule, TestRequest } from '@angular/common/http/testing';
 import { OpenmrsApiModule } from './openmrs-api.module';
@@ -9,7 +9,7 @@ describe('LocationResourceService:', () => {
   let httpMock: HttpTestingController;
   let windowRef: WindowRef;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [OpenmrsApiModule, HttpClientTestingModule],
       declarations: [],
