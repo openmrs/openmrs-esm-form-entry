@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { ConceptResourceService } from './concept-resource.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { OpenmrsApiModule } from './openmrs-api.module';
@@ -8,7 +8,7 @@ describe('Service : ConceptResourceService Unit Tests', () => {
   let conceptResourceService: ConceptResourceService;
   let httpMock: HttpTestingController;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, OpenmrsApiModule],
       declarations: [],

@@ -1,4 +1,4 @@
-import { TestBed, async, inject } from '@angular/core/testing';
+import { TestBed, inject, waitForAsync } from '@angular/core/testing';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { ProviderResourceService } from './provider-resource.service';
@@ -8,7 +8,7 @@ describe('Service : ProviderResourceService Unit Tests', () => {
   let providerResourceService: ProviderResourceService;
   let httpMock: HttpTestingController;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, OpenmrsApiModule],
       declarations: [],

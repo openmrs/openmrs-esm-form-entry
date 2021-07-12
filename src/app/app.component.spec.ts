@@ -1,8 +1,8 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { FeWrapperComponent } from './fe-wrapper/fe-wrapper.component';
-import { FormEntryModule } from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
+import { FormEntryModule } from '@ampath-kenya/ngx-formentry';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormSchemaService } from './form-schema/form-schema.service';
 import { OpenmrsApiModule } from './openmrs-api/openmrs-api.module';
@@ -14,7 +14,7 @@ import { EncounterViewerWrapperComponent } from './pretty-encounter-viewier/enco
 import { PrettyEncounterViewerComponent } from './pretty-encounter-viewier/pretty-encounter-viewer.component';
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, FormEntryModule, ReactiveFormsModule, OpenmrsApiModule],
       declarations: [

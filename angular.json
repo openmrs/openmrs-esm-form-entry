@@ -28,7 +28,9 @@
             ],
             "scripts": [],
             "customWebpackConfig": {
-              "path": "./extra-webpack.config.js"
+              "path": "extra-webpack.config.js",
+              "libraryName": "openmrs-esm-form-entry",
+              "libraryTarget": "umd"
             }
           },
           "configurations": {

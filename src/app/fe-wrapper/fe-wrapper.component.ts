@@ -13,7 +13,7 @@ import {
   DataSources,
   FormErrorsService,
   Form,
-} from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
+} from '@ampath-kenya/ngx-formentry';
 
 import { OpenmrsEsmApiService } from '../openmrs-api/openmrs-esm-api.service';
 import { FormSchemaService } from '../form-schema/form-schema.service';

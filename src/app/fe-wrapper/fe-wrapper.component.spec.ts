@@ -1,9 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { FeWrapperComponent } from './fe-wrapper.component';
-import { FormEntryModule } from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
+import { FormEntryModule } from '@ampath-kenya/ngx-formentry';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OpenmrsEsmApiService } from '../openmrs-api/openmrs-esm-api.service';
 import { of } from 'rxjs';
@@ -20,7 +20,7 @@ describe('FeWrapperComponent', () => {
   let component: FeWrapperComponent;
   let fixture: ComponentFixture<FeWrapperComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         FeWrapperComponent,

@@ -10,7 +10,7 @@ import {
   Form,
   EncounterAdapter,
   FormEntryModule,
-} from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
+} from '@ampath-kenya/ngx-formentry';
 import { PersonResourceService } from '../openmrs-api/person-resource.service';
 import { FormDataSourceService } from '../form-data-source/form-data-source.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';

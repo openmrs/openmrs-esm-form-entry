@@ -1,4 +1,4 @@
-import { TestBed, async, fakeAsync, inject, tick } from '@angular/core/testing';
+import { TestBed, fakeAsync, inject, tick, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 
 import { FormDataSourceService } from './form-data-source.service';
@@ -102,7 +102,7 @@ describe('Service: FormDataSourceService', () => {
     }),
   ));
 
-  it('should find location by uuid', async((done) => {
+  it('should find location by uuid', waitForAsync((done) => {
     const service: FormDataSourceService = TestBed.get(FormDataSourceService);
     const result = service.getLocationByUuid('test');
 
@@ -112,7 +112,7 @@ describe('Service: FormDataSourceService', () => {
     });
   }));
 
-  it('should call resolveConcept', async((done) => {
+  it('should call resolveConcept', waitForAsync((done) => {
     const service: FormDataSourceService = TestBed.get(FormDataSourceService);
     const result = service.resolveConcept('test');
 

@@ -4,7 +4,7 @@ import { concat, first } from 'rxjs/operators';
 
 // import { FormSchemaCompiler } from 'ngx-openmrs-formentry';
 import { FormResourceService } from '../openmrs-api/form-resource.service';
-import { FormSchemaCompiler } from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
+import { FormSchemaCompiler } from '@ampath-kenya/ngx-formentry';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 
 @Injectable()
