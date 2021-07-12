@@ -15,9 +15,7 @@
     "serve:single-spa": "ng serve --ssl true  --disable-host-check --deploy-url https://localhost:4202/ --host localhost --port 4202 --live-reload true",
     "serve:dist": "npx angular-http-server -p 4200 --https --cors --path dist/",
     "build-serve:dist": "npm run build:single-spa-local && npm run serve:dist",
-    "prettier": "prettier --config prettier.config.js --write \"src/**/*.{ts,tsx}\"",
-    "build:single-spa:openmrs-esm-form-entry-app": "ng build openmrs-esm-form-entry-app --prod --deploy-url http://localhost:4203/",
-    "serve:single-spa:openmrs-esm-form-entry-app": "ng s --project openmrs-esm-form-entry-app --disable-host-check --port 4203 --deploy-url http://localhost:4203/ --live-reload false"
+    "prettier": "prettier --config prettier.config.js --write \"src/**/*.{ts,tsx}\""
   },
   "private": true,
   "dependencies": {
