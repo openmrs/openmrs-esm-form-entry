@@ -12,6 +12,7 @@ import {
   Visit,
 } from '@openmrs/esm-framework';
 
+
 export interface QueuedEncounterRequest {
   url: string;
   method: string;

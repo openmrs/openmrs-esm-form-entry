@@ -15,14 +15,16 @@
     "serve:single-spa": "ng serve --ssl true  --disable-host-check --deploy-url https://localhost:4202/ --host localhost --port 4202 --live-reload true",
     "serve:dist": "npx angular-http-server -p 4200 --https --cors --path dist/",
     "build-serve:dist": "npm run build:single-spa-local && npm run serve:dist",
-    "prettier": "prettier --config prettier.config.js --write \"src/**/*.{ts,tsx}\""
+    "prettier": "prettier --config prettier.config.js --write \"src/**/*.{ts,tsx}\"",
+    "build:single-spa:openmrs-esm-form-entry-app": "ng build openmrs-esm-form-entry-app --prod --deploy-url http://localhost:4203/",
+    "serve:single-spa:openmrs-esm-form-entry-app": "ng s --project openmrs-esm-form-entry-app --disable-host-check --port 4203 --deploy-url http://localhost:4203/ --live-reload false"
   },
   "private": true,
   "dependencies": {
     "@ampath-kenya/ngx-formentry": "^3.0.0-alpha5",
     "@angular-builders/custom-webpack": "^8",
     "@angular/animations": "~11.2.14",
-    "@angular/cdk": "~11.2.14",
+    "@angular/cdk": "~11.2.13",
     "@angular/common": "~11.2.14",
     "@angular/compiler": "~11.2.14",
     "@angular/core": "~11.2.14",
@@ -40,9 +42,11 @@
     "ngx-file-uploader": "0.0.18",
     "ngx-webcam": "^0.2.2",
     "reflect-metadata": "^0.1.9",
-    "rxjs": "^6.5.3",
+    "rxjs": "^6.6.7",
+    "rxjs-compat": "^6.6.7",
     "shelljs": "^0.7.0",
-    "single-spa-angular": "^3.1.0",
+    "single-spa": ">=4.0.0",
+    "single-spa-angular": "^4.9.2",
     "slick-carousel": "^1.6.0",
     "systemjs-webpack-interop": "^2.3.6",
     "tree-model": "^1.0.5",
@@ -50,6 +54,7 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
+    "@angular-builders/custom-webpack": "11.1.2-beta.0",
     "@angular-devkit/build-angular": "~0.1102.14",
     "@angular/cli": "~11.2.14",
     "@angular/compiler-cli": "~11.2.14",
