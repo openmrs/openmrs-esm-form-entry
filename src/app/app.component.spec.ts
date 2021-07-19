@@ -10,8 +10,6 @@ import { LocalStorageService } from './local-storage/local-storage.service';
 import { FormDataSourceService } from './form-data-source/form-data-source.service';
 import { FormSubmissionService } from './form-submission/form-submission.service';
 import { FormSubmittedComponent } from './form-submitted/form-submitted.component';
-import { EncounterViewerWrapperComponent } from './pretty-encounter-viewier/encounter-viewer-wrapper.component';
-import { PrettyEncounterViewerComponent } from './pretty-encounter-viewier/pretty-encounter-viewer.component';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
@@ -20,9 +18,7 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent,
         FeWrapperComponent,
-        FormSubmittedComponent,
-        EncounterViewerWrapperComponent,
-        PrettyEncounterViewerComponent,
+        FormSubmittedComponent
       ],
       providers: [FormSchemaService, LocalStorageService, FormDataSourceService, FormSubmissionService],
     }).compileComponents();

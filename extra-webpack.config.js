@@ -1,3 +1,4 @@
+const {IgnorePlugin} = require('webpack');
 const singleSpaAngularWebpack = require("single-spa-angular/lib/webpack")
   .default;
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
@@ -13,9 +14,10 @@ module.exports = (angularWebpackConfig, options) => {
   );
 
   for (const dependency of Object.keys(packageJson.peerDependencies)) {
-    singleSpaWebpackConfig.externals[dependency] = dependency;
+    singleSpaWebpackConfig.externals.push(dependency);
   }
 
+  singleSpaWebpackConfig.plugins.push( new IgnorePlugin(/^\.\/locale$/, /moment$/));
   singleSpaWebpackConfig.plugins.push(new BundleAnalyzerPlugin());
   singleSpaWebpackConfig.plugins.push(new StatsWriterPlugin({
     filename: 'main-es2015.js.buildmanifest.json',
