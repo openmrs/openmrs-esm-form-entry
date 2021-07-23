@@ -8,7 +8,7 @@ import {
 
 setPublicPath('@openmrs/esm-form-entry-app');
 
-const backendDependencies = { 'webservices.rest': '2.24.0' };
+const backendDependencies = { 'webservices.rest': '^2.24.0' };
 const importTranslation = require.context('../translations', false, /.json$/, 'lazy');
 
 function setupOpenMRS() {
