@@ -28,7 +28,9 @@
             ],
             "scripts": [],
             "customWebpackConfig": {
-              "path": "./extra-webpack.config.js"
+              "path": "extra-webpack.config.js",
+              "libraryName": "openmrs-esm-form-entry",
+              "libraryTarget": "umd"
             }
           },
           "configurations": {
@@ -44,10 +46,10 @@
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": false,
+              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",

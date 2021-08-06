@@ -1,9 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { FeWrapperComponent } from './fe-wrapper.component';
-import { FormEntryModule } from '@ampath-kenya/ngx-openmrs-formentry/dist/ngx-formentry';
+import { FormEntryModule } from '@ampath-kenya/ngx-formentry';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OpenmrsEsmApiService } from '../openmrs-api/openmrs-esm-api.service';
 import { of } from 'rxjs';
@@ -13,20 +13,16 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import { FormDataSourceService } from '../form-data-source/form-data-source.service';
 import { FormSubmissionService } from '../form-submission/form-submission.service';
 import { FormSubmittedComponent } from '../form-submitted/form-submitted.component';
-import { PrettyEncounterViewerComponent } from '../pretty-encounter-viewier/pretty-encounter-viewer.component';
-import { EncounterViewerWrapperComponent } from '../pretty-encounter-viewier/encounter-viewer-wrapper.component';
 
 describe('FeWrapperComponent', () => {
   let component: FeWrapperComponent;
   let fixture: ComponentFixture<FeWrapperComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         FeWrapperComponent,
-        FormSubmittedComponent,
-        PrettyEncounterViewerComponent,
-        EncounterViewerWrapperComponent,
+        FormSubmittedComponent
       ],
       imports: [BrowserModule, BrowserAnimationsModule, FormEntryModule, ReactiveFormsModule, OpenmrsApiModule],
       providers: [

@@ -13,7 +13,7 @@
     }
   },
   "files": [
-    "src/main.ts",
+    "src/main.single-spa.ts",
     "src/polyfills.ts"
   ],
   "include": [

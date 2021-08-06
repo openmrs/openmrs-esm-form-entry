@@ -1,29 +1,27 @@
 import { enableProdMode, NgZone } from '@angular/core';
 
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { Router } from '@angular/router';
 import { ɵAnimationEngine as AnimationEngine } from '@angular/animations/browser';
+
+import { singleSpaAngular, getSingleSpaExtraProviders } from 'single-spa-angular';
+
+
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
-import singleSpaAngular from 'single-spa-angular';
 import { singleSpaPropsSubject, SingleSpaProps } from './single-spa/single-spa-props';
-import 'zone.js/dist/zone';
 
 if (environment.production) {
   enableProdMode();
 }
 
 const lifecycles = singleSpaAngular({
-  bootstrapFunction: (singleSpaProps) => {
+  bootstrapFunction: singleSpaProps => {
     singleSpaPropsSubject.next(singleSpaProps as SingleSpaProps);
-    return platformBrowserDynamic().bootstrapModule(AppModule);
+    return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(AppModule);
   },
   template: '<my-app-root />',
-  Router,
-  // tslint:disable-next-line:object-literal-shorthand
-  NgZone: NgZone,
-  // tslint:disable-next-line:object-literal-shorthand
-  AnimationEngine: AnimationEngine,
+  NgZone,
+  AnimationEngine,
 });
 
 export const bootstrap = lifecycles.bootstrap;

@@ -1,4 +1,6 @@
+import 'zone.js/dist/zone';
 import { setPublicPath } from 'systemjs-webpack-interop';
+
 import { messageOmrsServiceWorker } from '@openmrs/esm-framework';
 import {
   setupOfflineEncounterSync,
